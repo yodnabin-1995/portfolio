@@ -51,17 +51,39 @@ function setupNavigation() {
   const navLinks = document.querySelectorAll(".nav-menu a");
   const navbar = document.querySelector(".navbar");
 
-  // Mobile menu toggle
-  hamburger?.addEventListener("click", () => {
-    hamburger.classList.toggle("active");
-    navMenu?.classList.toggle("active");
-  });
+  // Debug: Check if elements exist
+  console.log('Hamburger:', hamburger);
+  console.log('Nav Menu:', navMenu);
+
+  // Mobile menu toggle with direct event handling
+  if (hamburger) {
+    hamburger.addEventListener("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      console.log('Hamburger clicked!');
+      
+      hamburger.classList.toggle("active");
+      if (navMenu) {
+        navMenu.classList.toggle("active");
+        console.log('Menu toggled, active:', navMenu.classList.contains('active'));
+      }
+      
+      // Prevent body scroll when menu is open
+      if (navMenu && navMenu.classList.contains("active")) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    });
+  }
 
   // Close mobile menu on link click
   navLinks.forEach((link) => {
     link.addEventListener("click", () => {
-      hamburger?.classList.remove("active");
-      navMenu?.classList.remove("active");
+      if (hamburger) hamburger.classList.remove("active");
+      if (navMenu) navMenu.classList.remove("active");
+      document.body.style.overflow = "auto";
     });
   });
 
@@ -109,23 +131,43 @@ function setupTheme() {
   const themeToggle = document.getElementById("theme-toggle");
   const savedTheme = localStorage.getItem("theme") || "light";
 
+  // Apply saved theme immediately
   document.documentElement.setAttribute("data-theme", savedTheme);
   updateThemeIcon(savedTheme);
 
-  themeToggle?.addEventListener("click", () => {
-    const currentTheme = document.documentElement.getAttribute("data-theme");
-    const newTheme = currentTheme === "light" ? "dark" : "light";
+  // Add click event listener
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+      const newTheme = currentTheme === "light" ? "dark" : "light";
 
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    updateThemeIcon(newTheme);
-  });
+      // Add transition class for smooth theme change
+      document.documentElement.style.transition = "all 0.3s ease";
+      
+      document.documentElement.setAttribute("data-theme", newTheme);
+      localStorage.setItem("theme", newTheme);
+      updateThemeIcon(newTheme);
+      
+      // Remove transition after animation completes
+      setTimeout(() => {
+        document.documentElement.style.transition = "";
+      }, 300);
+    });
+  }
 }
 
 function updateThemeIcon(theme) {
+  const themeToggle = document.getElementById("theme-toggle");
   const themeIcon = document.querySelector("#theme-toggle i");
-  if (themeIcon) {
-    themeIcon.className = theme === "light" ? "fas fa-moon" : "fas fa-sun";
+  
+  if (themeIcon && themeToggle) {
+    // Add rotation animation
+    themeToggle.style.transform = "rotate(180deg)";
+    
+    setTimeout(() => {
+      themeIcon.className = theme === "light" ? "fas fa-moon" : "fas fa-sun";
+      themeToggle.style.transform = "rotate(0deg)";
+    }, 150);
   }
 }
 
@@ -364,7 +406,7 @@ function openProjectModal(projectId) {
         "Task Management",
       ],
       github: "https://github.com/benjamin-1995/todo-golang",
-      demo: null,
+      demo: "screenshots/todo-golang.png",
     },
     "amazon-clone": {
       title: "Amazon Clone",
@@ -378,7 +420,7 @@ function openProjectModal(projectId) {
         "User Interface",
       ],
       github: "https://github.com/benjamin-1995/amazon-clone",
-      demo: null,
+      demo: "screenshots/amazon-clone.png",
     },
     "grade-calculator": {
       title: "Student Grade Calculator",
@@ -392,7 +434,7 @@ function openProjectModal(projectId) {
         "Interactive UI",
       ],
       github: "https://github.com/benjamin-1995/grade-calculator",
-      demo: null,
+      demo: "screenshots/grade-calculator.png",
     },
     "chat-app": {
       title: "Real-Time Chat Application",
@@ -406,7 +448,39 @@ function openProjectModal(projectId) {
         "User Authentication",
       ],
       github: "https://github.com/benjamin-1995/chat-app",
-      demo: null,
+      demo: "screenshots/chat-app.png",
+    },
+    "cloud-storage": {
+      title: "Cloud File Storage System",
+      description:
+        "Secure cloud storage solution with file synchronization, sharing capabilities, version control, and real-time collaboration",
+      tech: ["Golang", "AWS S3", "React"],
+      features: [
+        "File Upload & Download",
+        "Real-time Synchronization",
+        "File Sharing & Permissions",
+        "Version Control",
+        "Secure Authentication",
+        "Cloud Storage Integration",
+      ],
+      github: "https://github.com/benjamin-1995/cloud-storage",
+      demo: "screenshots/cloud_storage.png",
+    },
+    "ecommerce-platform": {
+      title: "E-Commerce Platform",
+      description:
+        "Full-stack online marketplace with payment integration, inventory management, and real-time notifications",
+      tech: ["React", "Node.js", "MongoDB"],
+      features: [
+        "Payment Integration",
+        "Inventory Management",
+        "Real-time Notifications",
+        "User Authentication",
+        "Product Management",
+        "Order Processing",
+      ],
+      github: "https://github.com/benjamin-1995/ecommerce-platform",
+      demo: "screenshots/ecommerce-platform.png",
     },
   };
 
@@ -423,7 +497,7 @@ function openProjectModal(projectId) {
           }
           ${
             project.demo
-              ? `<a href="${project.demo}" class="btn-secondary" target="_blank"><i class="fas fa-external-link-alt"></i> Live Demo</a>`
+              ? `<button onclick="openScreenshotModal('${project.demo}', '${project.title}')" class="btn-secondary"><i class="fas fa-image"></i> View Screenshot</button>`
               : ""
           }
         </div>
@@ -470,6 +544,76 @@ function closeModal() {
   });
 }
 
+function openScreenshotModal(imagePath, projectTitle) {
+  const modal = document.createElement('div');
+  modal.className = 'modal screenshot-modal';
+  modal.innerHTML = `
+    <div class="modal-content screenshot-content">
+      <button class="close" onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = 'auto';">&times;</button>
+      <h3>${projectTitle} - Screenshot</h3>
+      <img src="${imagePath}" alt="${projectTitle} Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: var(--shadow-lg);">
+    </div>
+  `;
+  
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+  `;
+  
+  document.body.appendChild(modal);
+  document.body.style.overflow = 'hidden';
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove();
+      document.body.style.overflow = 'auto';
+    }
+  });
+}
+
+function openScreenshotModal(imagePath, projectTitle) {
+  const modal = document.createElement('div');
+  modal.className = 'modal screenshot-modal';
+  modal.innerHTML = `
+    <div class="modal-content screenshot-content">
+      <button class="close" onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = 'auto';">&times;</button>
+      <h3>${projectTitle} - Screenshot</h3>
+      <img src="${imagePath}" alt="${projectTitle} Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: var(--shadow-lg);">
+    </div>
+  `;
+  
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+  `;
+  
+  document.body.appendChild(modal);
+  document.body.style.overflow = 'hidden';
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove();
+      document.body.style.overflow = 'auto';
+    }
+  });
+}
+
 // ===== CONTACT SYSTEM =====
 function setupContact() {
   const contactForm = document.querySelector(".contact-form");
@@ -495,7 +639,7 @@ function setupContact() {
 
     try {
       // Send email using EmailJS
-      await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+      await emailjs.send("service_p153q0q", "template_t0rjprb", {
         from_name: name,
         from_email: email,
         message: message,
@@ -599,37 +743,7 @@ function showNotification(message, type = "info") {
 }
 
 // ===== BLOG FUNCTIONALITY =====
-function toggleBlogContent(button) {
-  const blogCard = button.closest(".blog-card");
-  const shortText = blogCard.querySelector(".short-text");
-  const fullText = blogCard.querySelector(".full-text");
-
-  if (fullText.style.display === "none" || !fullText.style.display) {
-    fullText.style.display = "block";
-    shortText.style.display = "none";
-    button.textContent = "Read Less";
-  } else {
-    fullText.style.display = "none";
-    shortText.style.display = "block";
-    button.textContent = "Read More";
-  }
-}
-
-function toggleTestimonial(button) {
-  const testimonialCard = button.closest(".testimonial-card");
-  const shortText = testimonialCard.querySelector(".short-text");
-  const fullText = testimonialCard.querySelector(".full-text");
-
-  if (fullText.style.display === "none" || !fullText.style.display) {
-    fullText.style.display = "inline";
-    shortText.style.display = "none";
-    button.textContent = "Read Less";
-  } else {
-    fullText.style.display = "none";
-    shortText.style.display = "inline";
-    button.textContent = "Read More";
-  }
-}
+// Blog and testimonial functions removed as sections were deleted
 
 // ===== VISITOR TRACKING =====
 function setupVisitorTracking() {
@@ -832,6 +946,35 @@ function generateResumeHTML(data) {
 }
 
 // ===== UTILITY FUNCTIONS =====
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  const newTheme = currentTheme === "light" ? "dark" : "light";
+  
+  document.documentElement.setAttribute("data-theme", newTheme);
+  localStorage.setItem("theme", newTheme);
+  
+  const themeIcon = document.querySelector("#theme-toggle i");
+  if (themeIcon) {
+    themeIcon.className = newTheme === "light" ? "fas fa-moon" : "fas fa-sun";
+  }
+}
+
+function toggleMobileMenu() {
+  const hamburger = document.querySelector(".hamburger");
+  const navMenu = document.querySelector(".nav-menu");
+  
+  if (hamburger && navMenu) {
+    hamburger.classList.toggle("active");
+    navMenu.classList.toggle("active");
+    
+    if (navMenu.classList.contains("active")) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }
+}
+
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
@@ -932,6 +1075,30 @@ const additionalCSS = `
   .features-list i {
     color: var(--primary-color);
   }
+  
+  .screenshot-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 15px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: auto;
+    text-align: center;
+  }
+  
+  .screenshot-content h3 {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+  }
+  
+  .screenshot-content img {
+    border: 2px solid var(--border-color);
+    transition: transform 0.3s ease;
+  }
+  
+  .screenshot-content img:hover {
+    transform: scale(1.02);
+  }
 `;
 
 // Add additional CSS to document
@@ -1008,7 +1175,8 @@ function downloadResumeImage() {
     'Amazon Clone - E-commerce website with shopping cart',
     'Real-Time Chat App - Socket.io messaging platform',
     'Student Grade Calculator - React web application',
-    'E-Commerce Platform - Full-stack marketplace'
+    'E-Commerce Platform - Full-stack marketplace',
+    'Cloud File Storage System - Secure cloud storage with sync'
   ];
   
   ctx.fillStyle = '#374151';

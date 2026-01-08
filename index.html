@@ -18,7 +18,7 @@
     <script>
       // Initialize EmailJS with your public key
       (function () {
-        emailjs.init("YOUR_PUBLIC_KEY_HERE"); // Replace with your actual public key
+        emailjs.init("ckeNV1U1JhCDS4_Yp");
       })();
     </script>
   </head>
@@ -51,16 +51,19 @@
           <li><a href="#skills">Skills</a></li>
           <li><a href="#timeline">Timeline</a></li>
           <li><a href="#projects">Projects</a></li>
-          <li><a href="#achievements">Achievements</a></li>
-          <li><a href="#testimonials">Testimonials</a></li>
-          <li><a href="#blog">Blog</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
         <div class="nav-actions">
-          <button id="theme-toggle" class="theme-toggle">
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            onclick="toggleTheme()"
+          >
             <i class="fas fa-moon"></i>
           </button>
-          <div class="hamburger"><span></span><span></span><span></span></div>
+          <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+          </div>
         </div>
       </div>
     </nav>
@@ -104,12 +107,16 @@
               </p>
             </div>
             <div class="about-image">
-              <img src="images/logo.jpg" alt="Biniam Birhanu" class="profile-image" />
+              <img
+                src="images/logo.jpg"
+                alt="Biniam Birhanu"
+                class="profile-image"
+              />
             </div>
           </div>
           <div class="about-stats">
             <div class="stat-item">
-              <span class="stat-number" data-target="5">0</span>
+              <span class="stat-number" data-target="6">0</span>
               <span class="stat-label">Projects Completed</span>
             </div>
             <div class="stat-item">
@@ -135,28 +142,56 @@
             <div class="skill-category">
               <h3>Frontend</h3>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" class="skill-icon"> HTML5</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg"
+                    alt="HTML5"
+                    class="skill-icon"
+                  />
+                  HTML5</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="90"></div>
                 </div>
                 <span class="skill-percentage">90%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" class="skill-icon"> CSS3</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg"
+                    alt="CSS3"
+                    class="skill-icon"
+                  />
+                  CSS3</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="85"></div>
                 </div>
                 <span class="skill-percentage">85%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" class="skill-icon"> JavaScript</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg"
+                    alt="JavaScript"
+                    class="skill-icon"
+                  />
+                  JavaScript</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="80"></div>
                 </div>
                 <span class="skill-percentage">80%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" class="skill-icon"> React</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"
+                    alt="React"
+                    class="skill-icon"
+                  />
+                  React</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="75"></div>
                 </div>
@@ -167,28 +202,56 @@
             <div class="skill-category">
               <h3>Backend</h3>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java" class="skill-icon"> Java</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
+                    alt="Java"
+                    class="skill-icon"
+                  />
+                  Java</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="85"></div>
                 </div>
                 <span class="skill-percentage">85%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" class="skill-icon"> Node.js</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
+                    alt="Node.js"
+                    class="skill-icon"
+                  />
+                  Node.js</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="70"></div>
                 </div>
                 <span class="skill-percentage">70%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" class="skill-icon"> Python</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
+                    alt="Python"
+                    class="skill-icon"
+                  />
+                  Python</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="70"></div>
                 </div>
                 <span class="skill-percentage">70%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg" alt="Golang" class="skill-icon"> Golang</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg"
+                    alt="Golang"
+                    class="skill-icon"
+                  />
+                  Golang</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="65"></div>
                 </div>
@@ -199,28 +262,51 @@
             <div class="skill-category">
               <h3>Database & Tools</h3>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" class="skill-icon"> MySQL</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg"
+                    alt="MySQL"
+                    class="skill-icon"
+                  />
+                  MySQL</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="80"></div>
                 </div>
                 <span class="skill-percentage">80%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" class="skill-icon"> MongoDB</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
+                    alt="MongoDB"
+                    class="skill-icon"
+                  />
+                  MongoDB</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="75"></div>
                 </div>
                 <span class="skill-percentage">75%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" class="skill-icon"> Git</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg"
+                    alt="Git"
+                    class="skill-icon"
+                  />
+                  Git</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="90"></div>
                 </div>
                 <span class="skill-percentage">90%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><i class="fas fa-code"></i> REST APIs</span>
+                <span class="skill-name"
+                  ><i class="fas fa-code"></i> REST APIs</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="85"></div>
                 </div>
@@ -231,28 +317,55 @@
             <div class="skill-category">
               <h3>Development Tools</h3>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" alt="VS Code" class="skill-icon"> VS Code</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+                    alt="VS Code"
+                    class="skill-icon"
+                  />
+                  VS Code</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="95"></div>
                 </div>
                 <span class="skill-percentage">95%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" class="skill-icon"> GitHub</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+                    alt="GitHub"
+                    class="skill-icon"
+                  />
+                  GitHub</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="88"></div>
                 </div>
                 <span class="skill-percentage">88%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/intellij/intellij-original.svg" alt="IntelliJ IDEA" class="skill-icon"> IntelliJ IDEA</span>
+                <span class="skill-name"
+                  ><img
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/intellij/intellij-original.svg"
+                    alt="IntelliJ IDEA"
+                    class="skill-icon"
+                  />
+                  IntelliJ IDEA</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="82"></div>
                 </div>
                 <span class="skill-percentage">82%</span>
               </div>
               <div class="skill-item">
-                <span class="skill-name"><i class="fas fa-robot" style="color: var(--primary-color); font-size: 1.2em;"></i> Cursor AI</span>
+                <span class="skill-name"
+                  ><i
+                    class="fas fa-robot"
+                    style="color: var(--primary-color); font-size: 1.2em"
+                  ></i>
+                  Cursor AI</span
+                >
                 <div class="skill-bar">
                   <div class="skill-progress" data-width="78"></div>
                 </div>
@@ -513,6 +626,44 @@
                 </div>
               </div>
             </div>
+
+            <div class="project-card" data-category="fullstack">
+              <div class="project-image">
+                <i class="fas fa-cloud"></i>
+              </div>
+              <div class="project-content">
+                <h3>Cloud File Storage System</h3>
+                <p>
+                  Secure cloud storage solution with file synchronization,
+                  sharing capabilities, version control, and real-time
+                  collaboration
+                </p>
+                <div class="project-tech">
+                  <span>Golang</span>
+                  <span>AWS S3</span>
+                  <span>React</span>
+                </div>
+                <div class="project-stats">
+                  <span><i class="fas fa-star"></i> 4.8</span>
+                  <span><i class="fas fa-eye"></i> 156</span>
+                  <span><i class="fas fa-code-branch"></i> 4</span>
+                </div>
+                <div class="project-links">
+                  <button
+                    onclick="openProjectModal('cloud-storage')"
+                    class="btn-secondary"
+                  >
+                    Details
+                  </button>
+                  <a
+                    href="https://github.com/benjamin-1995"
+                    target="_blank"
+                    class="btn-primary"
+                    >Code</a
+                  >
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -541,43 +692,6 @@
               </div>
             </div>
 
-            <div class="project-card" data-category="fullstack">
-              <div class="project-image">
-                <i class="fas fa-shopping-bag"></i>
-              </div>
-              <div class="project-content">
-                <h3>E-Commerce Platform</h3>
-                <p>
-                  Full-stack online marketplace with payment integration,
-                  inventory management, and real-time notifications
-                </p>
-                <div class="project-tech">
-                  <span>React</span>
-                  <span>Node.js</span>
-                  <span>MongoDB</span>
-                </div>
-                <div class="project-stats">
-                  <span><i class="fas fa-star"></i> 4.9</span>
-                  <span><i class="fas fa-eye"></i> 245</span>
-                  <span><i class="fas fa-code-branch"></i> 8</span>
-                </div>
-                <div class="project-links">
-                  <button
-                    onclick="openProjectModal('ecommerce-platform')"
-                    class="btn-secondary"
-                  >
-                    Details
-                  </button>
-                  <a
-                    href="https://github.com/benjamin-1995"
-                    target="_blank"
-                    class="btn-primary"
-                    >Code</a
-                  >
-                </div>
-              </div>
-            </div>
-
             <div class="project-card future">
               <div class="project-image">
                 <i class="fas fa-chart-line"></i>
@@ -592,25 +706,6 @@
                   <span>React</span>
                   <span>D3.js</span>
                   <span>WebSocket</span>
-                </div>
-                <div class="project-status">Planning</div>
-              </div>
-            </div>
-
-            <div class="project-card future">
-              <div class="project-image">
-                <i class="fas fa-cloud"></i>
-              </div>
-              <div class="project-content">
-                <h3>Cloud File Storage System</h3>
-                <p>
-                  Secure cloud storage solution with file synchronization,
-                  sharing capabilities, and version control
-                </p>
-                <div class="project-tech">
-                  <span>Golang</span>
-                  <span>AWS S3</span>
-                  <span>React</span>
                 </div>
                 <div class="project-status">Planning</div>
               </div>
@@ -771,198 +866,6 @@
         </div>
       </section>
 
-      <section id="testimonials" class="testimonials">
-        <div class="container">
-          <h2>What People Say</h2>
-          <div class="testimonials-grid">
-            <div class="testimonial-card">
-              <div class="testimonial-content">
-                <p class="testimonial-text">
-                  <span class="short-text"
-                    >"Biniam is an exceptional student with strong
-                    problem-solving skills. His dedication to learning and
-                    applying software engineering principles is
-                    impressive..."</span
-                  >
-                  <span class="full-text" style="display: none"
-                    >"Biniam is an exceptional student with strong
-                    problem-solving skills. His dedication to learning and
-                    applying software engineering principles is impressive. He
-                    consistently delivers quality work in group projects and
-                    shows great initiative in exploring new technologies. His
-                    ability to collaborate effectively and mentor fellow
-                    students makes him a valuable team member."</span
-                  >
-                </p>
-                <button class="read-more-btn" onclick="toggleTestimonial(this)">
-                  Read More
-                </button>
-              </div>
-              <div class="testimonial-author">
-                <div class="author-info">
-                  <h4>Dr. Alemayehu Tadesse</h4>
-                  <span
-                    >Software Engineering Professor, Debre Markos
-                    University</span
-                  >
-                </div>
-              </div>
-            </div>
-
-            <div class="testimonial-card">
-              <div class="testimonial-content">
-                <p class="testimonial-text">
-                  <span class="short-text"
-                    >"Working with Biniam on our university capstone project was
-                    great. He has excellent coding skills and always brings
-                    creative solutions..."</span
-                  >
-                  <span class="full-text" style="display: none"
-                    >"Working with Biniam on our university capstone project was
-                    great. He has excellent coding skills and always brings
-                    creative solutions to technical challenges. A reliable team
-                    member who takes ownership of his tasks and helps others
-                    when needed. His positive attitude and technical expertise
-                    made our project successful."</span
-                  >
-                </p>
-                <button class="read-more-btn" onclick="toggleTestimonial(this)">
-                  Read More
-                </button>
-              </div>
-              <div class="testimonial-author">
-                <div class="author-info">
-                  <h4>Yohannes Mekonnen</h4>
-                  <span>Classmate & Project Partner, DMU</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="achievements" class="achievements">
-        <div class="container">
-          <h2>Achievements & Certifications</h2>
-          <div class="achievements-grid">
-            <div class="achievement-card">
-              <div class="achievement-icon">
-                <i class="fas fa-trophy"></i>
-              </div>
-              <h3>Academic Excellence</h3>
-              <p>Maintained 80%+ GPA throughout Software Engineering program</p>
-              <span class="achievement-date">2023 - Present</span>
-            </div>
-            <div class="achievement-card">
-              <div class="achievement-icon">
-                <i class="fas fa-code"></i>
-              </div>
-              <h3>Full-Stack Projects</h3>
-              <p>Successfully completed 5+ full-stack development projects</p>
-              <span class="achievement-date">2024</span>
-            </div>
-            <div class="achievement-card">
-              <div class="achievement-icon">
-                <i class="fas fa-users"></i>
-              </div>
-              <h3>Team Leadership</h3>
-              <p>Led multiple university group projects and mentored peers</p>
-              <span class="achievement-date">2024</span>
-            </div>
-            <div class="achievement-card">
-              <div class="achievement-icon">
-                <i class="fas fa-graduation-cap"></i>
-              </div>
-              <h3>Software Engineering</h3>
-              <p>4th Year Student at Debre Markos University</p>
-              <span class="achievement-date">2023 - 2025</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="blog" class="blog">
-        <div class="container">
-          <h2>Latest Blog Posts</h2>
-          <div class="blog-grid">
-            <article class="blog-card">
-              <div class="blog-date">Dec 20, 2024</div>
-              <h3>Getting Started with Java Spring Boot</h3>
-              <div class="blog-content">
-                <p class="short-text">
-                  A beginner's guide to building REST APIs with Spring Boot
-                  framework and best practices...
-                </p>
-                <div class="full-text" style="display: none">
-                  <p>
-                    A beginner's guide to building REST APIs with Spring Boot
-                    framework and best practices. In this comprehensive
-                    tutorial, I'll walk you through setting up your first Spring
-                    Boot project, understanding dependency injection, creating
-                    RESTful endpoints, and implementing proper error handling.
-                  </p>
-                  <p>
-                    We'll cover essential topics like Spring Boot starters,
-                    auto-configuration, and how to structure your application
-                    for scalability. You'll learn to create controllers,
-                    services, and repositories following industry best
-                    practices.
-                  </p>
-                  <p>
-                    By the end of this guide, you'll have a solid foundation in
-                    Spring Boot development and be ready to build
-                    production-ready applications.
-                  </p>
-                </div>
-              </div>
-              <div class="blog-meta">
-                <span><i class="fas fa-clock"></i> 5 min read</span>
-                <span><i class="fas fa-eye"></i> 234 views</span>
-              </div>
-              <button class="blog-read-more" onclick="toggleBlogContent(this)">
-                Read More
-              </button>
-            </article>
-
-            <article class="blog-card">
-              <div class="blog-date">Dec 15, 2024</div>
-              <h3>React Hooks: A Junior Developer's Journey</h3>
-              <div class="blog-content">
-                <p class="short-text">
-                  My experience learning React hooks and how they simplified my
-                  component logic...
-                </p>
-                <div class="full-text" style="display: none">
-                  <p>
-                    My experience learning React hooks and how they simplified
-                    my component logic. Coming from class components, hooks
-                    seemed intimidating at first, but they've revolutionized how
-                    I write React applications.
-                  </p>
-                  <p>
-                    I'll share my journey learning useState, useEffect, and
-                    custom hooks. You'll discover common pitfalls I encountered
-                    and how to avoid them. We'll explore practical examples that
-                    demonstrate the power and elegance of hooks.
-                  </p>
-                  <p>
-                    This post includes code examples, best practices, and tips
-                    that will help you master React hooks faster than I did.
-                  </p>
-                </div>
-              </div>
-              <div class="blog-meta">
-                <span><i class="fas fa-clock"></i> 4 min read</span>
-                <span><i class="fas fa-eye"></i> 189 views</span>
-              </div>
-              <button class="blog-read-more" onclick="toggleBlogContent(this)">
-                Read More
-              </button>
-            </article>
-          </div>
-        </div>
-      </section>
-
       <section id="contact" class="contact">
         <div class="container">
           <h2>Get In Touch</h2>
@@ -977,7 +880,7 @@
                 <i class="fas fa-envelope"></i>
                 <div>
                   <span class="contact-label">Email</span>
-                  <span class="contact-value">hubbenjamin6@gmail.com</span>
+                  <span class="contact-value">awsc0620@gmail.com</span>
                 </div>
               </div>
               <div class="contact-item">
@@ -1088,7 +991,6 @@
       </div>
     </footer>
 
-    <!-- Project Modal -->
     <div id="project-modal" class="modal">
       <div class="modal-content">
         <button class="close" onclick="closeModal()">&times;</button>
