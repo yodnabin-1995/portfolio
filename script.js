@@ -405,7 +405,7 @@ function openProjectModal(projectId) {
         "API Endpoints",
         "Task Management",
       ],
-      github: "https://github.com/benjamin-1995/todo-golang",
+      github: "https://github.com/yodnabin-1995/todo-golang",
       demo: "screenshots/todo-golang.png",
     },
     "amazon-clone": {
@@ -419,7 +419,7 @@ function openProjectModal(projectId) {
         "Responsive Design",
         "User Interface",
       ],
-      github: "https://github.com/benjamin-1995/amazon-clone",
+      github: "https://github.com/yodnabin-1995/amazon-clone",
       demo: "screenshots/amazon-clone.png",
     },
     "grade-calculator": {
@@ -433,7 +433,7 @@ function openProjectModal(projectId) {
         "Progress Tracking",
         "Interactive UI",
       ],
-      github: "https://github.com/benjamin-1995/grade-calculator",
+      github: "https://github.com/yodnabin-1995/grade-calculator",
       demo: "screenshots/grade-calculator.png",
     },
     "chat-app": {
@@ -447,7 +447,7 @@ function openProjectModal(projectId) {
         "File Sharing",
         "User Authentication",
       ],
-      github: "https://github.com/benjamin-1995/chat-app",
+      github: "https://github.com/yodnabin-1995/chat-app",
       demo: "screenshots/chat-app.png",
     },
     "cloud-storage": {
@@ -463,7 +463,7 @@ function openProjectModal(projectId) {
         "Secure Authentication",
         "Cloud Storage Integration",
       ],
-      github: "https://github.com/benjamin-1995/cloud-storage",
+      github: "https://github.com/yodnabin-1995/cloud-storage",
       demo: "screenshots/cloud_storage.png",
     },
     "ecommerce-platform": {
@@ -479,7 +479,7 @@ function openProjectModal(projectId) {
         "Product Management",
         "Order Processing",
       ],
-      github: "https://github.com/benjamin-1995/ecommerce-platform",
+      github: "https://github.com/yodnabin-1995/ecommerce-platform",
       demo: "screenshots/ecommerce-platform.png",
     },
   };
@@ -811,7 +811,7 @@ function downloadResume() {
     contact: {
       email: "hubbenjamin6@gmail.com",
       linkedin: "linkedin.com/in/biniam-birihanu-95ba9b38b/",
-      github: "github.com/benjamin-1995",
+      github: "github.com/yodnabin-1995",
     },
     education: {
       degree: "Bachelor of Software Engineering",
@@ -1205,7 +1205,7 @@ function downloadResumeImage() {
   ctx.fillStyle = 'white';
   ctx.font = '16px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText('Generated from Portfolio Website | github.com/benjamin-1995', canvas.width / 2, canvas.height - 50);
+  ctx.fillText('Generated from Portfolio Website | github.com/yodnabin-1995', canvas.width / 2, canvas.height - 50);
   
   // Download
   const link = document.createElement('a');
