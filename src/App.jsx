@@ -1,1037 +1,736 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 
-const navItems = [
-  { id: "home", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "skills", label: "Skills" },
-  { id: "timeline", label: "Journey" },
-  { id: "contact", label: "Contact" },
+// ── Data ───────────────────────────────────────────────────────────────────────
+const NAV = [
+  { id: "about",    label: "About"    },
+  { id: "skills",   label: "Skills"   },
+  { id: "projects", label: "Projects" },
+  { id: "contact",  label: "Contact"  },
 ];
 
-const skillGroups = [
+const SOCIAL = [
+  { icon: "fab fa-github",    href: "https://github.com/yodnabin-1995",                             label: "GitHub"    },
+  { icon: "fab fa-linkedin",  href: "https://www.linkedin.com/in/biniam-birihanu-95ba9b38b/",        label: "LinkedIn"  },
+  { icon: "fas fa-envelope",  href: "mailto:awsc0620@gmail.com",                                    label: "Email"     },
+  { icon: "fab fa-instagram", href: "https://www.instagram.com/benjamin16333/",                     label: "Instagram" },
+  { icon: "fab fa-facebook",  href: "https://web.facebook.com/biniam.birihanu.3",                   label: "Facebook"  },
+  { icon: "fab fa-x-twitter", href: "https://x.com/Benj16amin/",                                    label: "X"         },
+  { icon: "fab fa-telegram",  href: "https://t.me/Ben16jamin",                                      label: "Telegram"  },
+];
+
+const SKILL_GROUPS = [
   {
     title: "Frontend",
     skills: [
-      { name: "HTML5", value: 90 },
-      { name: "CSS3", value: 85 },
-      { name: "JavaScript", value: 80 },
-      { name: "React", value: 75 },
+      { name: "HTML5",       icon: "devicon-html5-plain colored"              },
+      { name: "Tailwind CSS",icon: "devicon-tailwindcss-plain colored"        },
+      { name: "JavaScript",  icon: "devicon-javascript-plain colored"         },
+      { name: "TypeScript",  icon: "devicon-typescript-plain colored"         },
+      { name: "React",       icon: "devicon-react-original colored"           },
     ],
   },
   {
     title: "Backend",
     skills: [
-      { name: "NestJS", value: 85 },
-      { name: "Node.js", value: 70 },
-      { name: "Python", value: 70 },
-      { name: "Golang", value: 65 },
+      { name: "Node.js",    icon: "devicon-nodejs-plain colored"             },
+      { name: "Express.js", icon: "devicon-express-original colored"         },
+      { name: "Golang",     icon: "devicon-go-original-wordmark colored"     },
+      { name: "MongoDB",    icon: "devicon-mongodb-plain colored"            },
+      { name: "PostgreSQL", icon: "devicon-postgresql-plain colored"         },
+      { name: "MySQL",      icon: "devicon-mysql-plain colored"              },
+      { name: "NestJS",     icon: "devicon-nestjs-plain colored"             },
     ],
   },
   {
-    title: "Database & Tools",
+    title: "Others",
     skills: [
-      { name: "PostgreSQL", value: 80 },
-      { name: "MongoDB", value: 75 },
-      { name: "Git", value: 90 },
-      { name: "REST APIs", value: 85 },
+      { name: "GitHub",     icon: "devicon-github-original colored"          },
+      { name: "GitLab",     icon: "devicon-gitlab-plain colored"             },
+      { name: "Git",        icon: "devicon-git-plain colored"                },
+      { name: "Docker",     icon: "devicon-docker-plain colored"             },
+      { name: "Kubernetes", icon: "devicon-kubernetes-plain colored"         },
     ],
   },
 ];
 
-const focusAreas = [
+
+const PROJECTS = [
   {
-    icon: "fas fa-laptop-code",
-    title: "Frontend Development",
-    description:
-      "Building clean, responsive interfaces with React, HTML, CSS, and JavaScript.",
+    title: "Besew",
+    desc: "A professional job search platform connecting employers and job seekers seamlessly. Besew streamlines the hiring process with powerful search, real-time messaging, and scalable infrastructure built for high-traffic environments.",
+    img: "/images/besew.png",
+    demo: "https://besewonline.com",
+    repo: "https://github.com/yodnabin-1995",
+    tags: ["React", "NestJS", "Docker", "Apache Pulsar", "MongoDB"],
   },
   {
-    icon: "fas fa-server",
-    title: "Backend Development",
-    description:
-      "Developing backend services and APIs with NestJS, Node.js, Python, and Golang.",
-  },
-  {
-    icon: "fas fa-database",
-    title: "Database Work",
-    description:
-      "Working with PostgreSQL and MongoDB for reliable data storage and application support.",
+    title: "Besew Casting",
+    desc: "Ethiopia's premier platform connecting visionary directors with verified actors, models, voice artists, and crew — powered by AI.",
+    img: "/images/casting.png",
+    demo: "https://cast.besewonline.com/",
+    repo: "https://github.com/yodnabin-1995",
+    tags: ["React", "NestJS", "Docker", "Apache Pulsar", "MongoDB"],
   },
 ];
 
-const highlights = [
-  "Software Engineering student at Debre Markos University",
-  "Interested in internships, collaboration, and practical full-stack work",
-  "Focused on clean UI, maintainable code, and useful digital products",
-];
 
-const journey = [
-  {
-    year: "2023",
-    title: "Started Software Engineering",
-    description:
-      "Began my Software Engineering studies at Debre Markos University.",
-  },
-  {
-    year: "2023",
-    title: "Built My First Program",
-    description:
-      "Created an early programming project and strengthened my software development basics.",
-  },
-  {
-    year: "2024",
-    title: "Entered Web Development",
-    description:
-      "Learned HTML, CSS, and JavaScript and started building web interfaces.",
-  },
-  {
-    year: "2024",
-    title: "Expanded to Full Stack",
-    description:
-      "Worked with React, NestJS, and PostgreSQL-based solutions to build broader applications.",
-  },
-  {
-    year: "2025",
-    title: "Advanced Academic Focus",
-    description:
-      "Continuing as a 4th year student while improving portfolio quality and practical skills.",
-  },
-];
+// ── Helpers ────────────────────────────────────────────────────────────────────
+const shell = "mx-auto w-full max-w-5xl px-5 sm:px-8";
+const sec   = "py-12 sm:py-16";
 
-const statTargets = [
-  { label: "Projects Completed", value: 6 },
-  { label: "Technologies Learned", value: 12 },
-  { label: "Years of Study", value: 4 },
-  { label: "Academic Performance", value: 80, suffix: "%" },
-];
-
-const contactLinks = [
-  {
-    icon: "fas fa-envelope",
-    label: "awsc0620@gmail.com",
-    href: "mailto:awsc0620@gmail.com",
-  },
-  {
-    icon: "fab fa-github",
-    label: "github.com/yodnabin-1995",
-    href: "https://github.com/yodnabin-1995",
-  },
-  {
-    icon: "fab fa-linkedin",
-    label: "LinkedIn Profile",
-    href: "https://www.linkedin.com/in/biniam-birihanu-95ba9b38b/",
-  },
-];
-
-const notificationStyles = {
-  success: "bg-emerald-600",
-  error: "bg-red-600",
-  info: "bg-blue-600",
-};
-
-const notificationIcons = {
-  success: "fas fa-check-circle",
-  error: "fas fa-circle-exclamation",
-  info: "fas fa-circle-info",
-};
-
-const shell = "mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8";
-const sectionSpace = "py-14 sm:py-20 lg:py-24";
-const card =
-  "rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900";
-const secondaryCard =
-  "rounded-lg border border-slate-200 bg-slate-50 shadow-sm dark:border-slate-800 dark:bg-slate-950";
-const primaryButton =
-  "inline-flex items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white";
-const secondaryButton =
-  "inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800";
-
-function SectionHeading({ eyebrow, title, description }) {
+function Label({ children }) {
   return (
-    <div className="max-w-3xl">
-      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400">
-        {eyebrow}
-      </p>
-      <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl lg:text-4xl">
-        {title}
-      </h2>
-      {description ? (
-        <p className="mt-4 text-base leading-7 text-slate-600 dark:text-slate-300">
-          {description}
-        </p>
-      ) : null}
+    <span className="inline-block rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-indigo-400">
+      {children}
+    </span>
+  );
+}
+
+function SectionTitle({ label, title, sub }) {
+  return (
+    <div className="mb-8 text-center">
+      <Label>{label}</Label>
+      <h2 className="mt-3 text-3xl font-extrabold text-white sm:text-4xl">{title}</h2>
+      {sub && <p className="mt-2 text-slate-400">{sub}</p>}
     </div>
   );
 }
 
-function App() {
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") || "light",
-  );
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
-  const [skillsVisible, setSkillsVisible] = useState(false);
-  const [stats, setStats] = useState(statTargets.map(() => 0));
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [sending, setSending] = useState(false);
-  const [notification, setNotification] = useState(null);
+// ── Skills grid (tabbed + animated) ──────────────────────────────────────────
+function SkillsGrid() {
+  const ref = useRef(null);
+  const [on, setOn] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    document.documentElement.style.colorScheme = theme;
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  useEffect(() => {
-    emailjs.init("ckeNV1U1JhCDS4_Yp");
-  }, []);
-
-  useEffect(() => {
-    const sections = document.querySelectorAll("main section[id]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-
-          setActiveSection(entry.target.id);
-          if (entry.target.id === "skills") {
-            setSkillsVisible(true);
-          }
-        });
-      },
-      { threshold: 0.45 },
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setOn(true); io.disconnect(); } },
+      { threshold: 0.1 }
     );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
+  const group = SKILL_GROUPS[activeTab];
+
+  return (
+    <div ref={ref}>
+      {/* Tab bar */}
+      <div className="mb-8 flex flex-wrap justify-center gap-2">
+        {SKILL_GROUPS.map((g, i) => (
+          <button
+            key={g.title}
+            onClick={() => setActiveTab(i)}
+            className={`relative flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300 ${
+              activeTab === i
+                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
+                : "border border-white/10 bg-white/5 text-slate-400 hover:border-indigo-500/40 hover:text-white"
+            }`}
+          >
+            <i className={
+              g.title === "Frontend" ? "fas fa-desktop text-xs" :
+              g.title === "Backend"  ? "fas fa-server text-xs"  :
+                                       "fas fa-wrench text-xs"
+            } />
+            {g.title}
+            <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+              activeTab === i ? "bg-white/20 text-white" : "bg-white/10 text-slate-400"
+            }`}>
+              {g.skills.length}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Cards */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {group.skills.map((sk, si) => (
+          <div
+            key={sk.name}
+            className="group relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-4 py-6 backdrop-blur-sm transition-all duration-300 hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:shadow-lg hover:shadow-indigo-500/10 hover:-translate-y-1"
+            style={
+              on
+                ? { animation: `fadeInUp 0.35s ease ${si * 0.07}s both` }
+                : { opacity: 0 }
+            }
+          >
+            {/* Glow blob */}
+            <div className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style={{ background: "radial-gradient(circle at 50% 50%, rgba(99,102,241,0.15) 0%, transparent 70%)" }}
+            />
+            <i className={`${sk.icon} text-4xl transition-transform duration-300 group-hover:scale-110`} />
+            <span className="text-center text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
+              {sk.name}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* All skills strip */}
+      <div className="mt-8 flex flex-wrap justify-center gap-2">
+        {SKILL_GROUPS.flatMap((g) => g.skills).map((sk) => (
+          <span
+            key={sk.name}
+            className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium text-slate-400 hover:border-indigo-500/40 hover:text-indigo-300 transition-colors cursor-default"
+          >
+            <i className={`${sk.icon} text-sm`} />
+            {sk.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+// ── Project Card ──────────────────────────────────────────────────────────────
+function ProjectCard({ project }) {
+  return (
+    <div className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm transition hover:border-indigo-500/40 hover:bg-white/[0.07]">
+      {/* Image */}
+      <div className="h-48 overflow-hidden">
+        <img
+          src={project.img}
+          alt={project.title}
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+        />
+      </div>
+
+      {/* Body */}
+      <div className="p-5">
+        {/* Tags */}
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {project.tags.map((t) => (
+            <span
+              key={t}
+              className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-indigo-400"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+
+        <h3 className="mb-2 text-base font-bold text-white">{project.title}</h3>
+        <p className="mb-4 text-sm leading-6 text-slate-400 line-clamp-3">{project.desc}</p>
+
+        {/* Links */}
+        <div className="flex gap-3">
+          <a
+            href={project.demo}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-indigo-500"
+          >
+            <i className="fas fa-external-link-alt text-[10px]" /> Live demo →
+          </a>
+          <a
+            href={project.repo}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
+          >
+            <i className="fab fa-github" /> Go to repository
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+// ── App ────────────────────────────────────────────────────────────────────────
+export default function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [active,   setActive]   = useState("about");
+  const [form,     setForm]     = useState({ name: "", email: "", message: "" });
+  const [sending,  setSending]  = useState(false);
+  const [toast,    setToast]    = useState(null);
+
+  // Always dark
   useEffect(() => {
-    if (!notification) return undefined;
-
-    const timeoutId = window.setTimeout(() => setNotification(null), 4500);
-    return () => window.clearTimeout(timeoutId);
-  }, [notification]);
-
-  useEffect(() => {
-    let frameId;
-    const start = performance.now();
-    const duration = 1200;
-
-    const update = (now) => {
-      const progress = Math.min((now - start) / duration, 1);
-      setStats(statTargets.map((item) => Math.floor(item.value * progress)));
-
-      if (progress < 1) {
-        frameId = requestAnimationFrame(update);
-      } else {
-        setStats(statTargets.map((item) => item.value));
-      }
-    };
-
-    frameId = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(frameId);
+    document.documentElement.classList.add("dark");
+    document.documentElement.style.colorScheme = "dark";
   }, []);
 
-  const handleThemeToggle = () => {
-    setTheme((current) => (current === "light" ? "dark" : "light"));
-  };
+  useEffect(() => { emailjs.init("ckeNV1U1JhCDS4_Yp"); }, []);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
-  };
+  // Active section tracker
+  useEffect(() => {
+    const sections = document.querySelectorAll("section[id]");
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); }),
+      { threshold: 0.35 }
+    );
+    sections.forEach((s) => io.observe(s));
+    return () => io.disconnect();
+  }, []);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
-    if (!form.name.trim()) {
-      setNotification({ type: "error", message: "Please enter your name." });
-      return;
-    }
+  const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      setNotification({
-        type: "error",
-        message: "Please enter a valid email address.",
-      });
-      return;
-    }
-
-    if (form.message.trim().length < 10) {
-      setNotification({
-        type: "error",
-        message: "Please enter a message of at least 10 characters.",
-      });
-      return;
-    }
-
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim())                                return setToast({ ok: false, msg: "Please enter your name."           });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))  return setToast({ ok: false, msg: "Please enter a valid email."       });
+    if (form.message.trim().length < 10)                  return setToast({ ok: false, msg: "Message needs at least 10 chars." });
     setSending(true);
-
     try {
       await emailjs.send("service_p153q0q", "template_t0rjprb", {
-        from_name: form.name.trim(),
+        from_name:  form.name.trim(),
         from_email: form.email.trim(),
-        message: form.message.trim(),
-        to_name: "Biniam Birhanu",
-        reply_to: form.email.trim(),
+        message:    form.message.trim(),
+        to_name:    "Biniam Birhanu",
+        reply_to:   form.email.trim(),
       });
-
       setForm({ name: "", email: "", message: "" });
-      setNotification({
-        type: "success",
-        message: "Message sent successfully.",
-      });
-    } catch (error) {
-      console.error(error);
-      setNotification({
-        type: "error",
-        message: "Failed to send message. Please try again later.",
-      });
+      setToast({ ok: true, msg: "Message sent!" });
+    } catch {
+      setToast({ ok: false, msg: "Failed to send. Try again later." });
     } finally {
       setSending(false);
     }
   };
 
-  const downloadResume = () => {
-    const skillMarkup = skillGroups
-      .map(
-        (group) => `
-          <div class="skill-block">
-            <h3>${group.title}</h3>
-            <p>${group.skills.map((skill) => skill.name).join(", ")}</p>
-          </div>
-        `,
-      )
-      .join("");
-
-    const strengthsMarkup = focusAreas
-      .map(
-        (item) => `
-          <li>
-            <strong>${item.title}:</strong> ${item.description}
-          </li>
-        `,
-      )
-      .join("");
-
-    const journeyMarkup = journey
-      .map(
-        (item) => `
-          <div class="timeline-item">
-            <div class="timeline-year">${item.year}</div>
-            <div>
-              <h4>${item.title}</h4>
-              <p>${item.description}</p>
-            </div>
-          </div>
-        `,
-      )
-      .join("");
-
-    const linksMarkup = contactLinks
-      .map(
-        (item) => `
-          <li><a href="${item.href}">${item.label}</a></li>
-        `,
-      )
-      .join("");
-
-    const resumeHTML = `
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>Biniam Birhanu Resume</title>
-          <style>
-            * { box-sizing: border-box; }
-            body {
-              font-family: Arial, Helvetica, sans-serif;
-              margin: 0;
-              background: #f8fafc;
-              color: #0f172a;
-              line-height: 1.6;
-            }
-            .page {
-              max-width: 960px;
-              margin: 32px auto;
-              background: #ffffff;
-              border: 1px solid #e2e8f0;
-              padding: 40px;
-            }
-            .header {
-              display: flex;
-              justify-content: space-between;
-              gap: 24px;
-              border-bottom: 2px solid #e2e8f0;
-              padding-bottom: 24px;
-              margin-bottom: 32px;
-            }
-            .header h1 {
-              margin: 0;
-              font-size: 34px;
-            }
-            .header h2 {
-              margin: 8px 0 0;
-              font-size: 18px;
-              color: #475569;
-              font-weight: 600;
-            }
-            .contact {
-              text-align: right;
-              font-size: 14px;
-            }
-            .contact div + div { margin-top: 6px; }
-            .section { margin-top: 28px; }
-            .section h3 {
-              margin: 0 0 12px;
-              font-size: 17px;
-              text-transform: uppercase;
-              letter-spacing: 0.08em;
-              color: #334155;
-            }
-            .summary,
-            .education,
-            .project-note {
-              color: #334155;
-            }
-            .skills-grid {
-              display: grid;
-              grid-template-columns: repeat(2, minmax(0, 1fr));
-              gap: 16px;
-            }
-            .skill-block {
-              border: 1px solid #e2e8f0;
-              padding: 14px 16px;
-              background: #f8fafc;
-            }
-            .skill-block h3 {
-              margin: 0 0 6px;
-              font-size: 15px;
-              color: #0f172a;
-              letter-spacing: 0;
-              text-transform: none;
-            }
-            .skill-block p {
-              margin: 0;
-              color: #475569;
-            }
-            ul {
-              margin: 0;
-              padding-left: 20px;
-            }
-            li + li { margin-top: 8px; }
-            .timeline-item {
-              display: grid;
-              grid-template-columns: 90px 1fr;
-              gap: 16px;
-              padding: 12px 0;
-              border-bottom: 1px solid #e2e8f0;
-            }
-            .timeline-item:last-child { border-bottom: 0; }
-            .timeline-year {
-              font-weight: 700;
-              color: #0f172a;
-            }
-            .timeline-item h4 {
-              margin: 0 0 4px;
-              font-size: 16px;
-            }
-            .timeline-item p {
-              margin: 0;
-              color: #475569;
-            }
-            a {
-              color: #0f172a;
-              text-decoration: none;
-            }
-            @media print {
-              body { background: #ffffff; }
-              .page {
-                margin: 0;
-                border: 0;
-                max-width: none;
-                padding: 0;
-              }
-            }
-            @media (max-width: 700px) {
-              .page { padding: 24px; }
-              .header {
-                display: block;
-              }
-              .contact {
-                text-align: left;
-                margin-top: 16px;
-              }
-              .skills-grid {
-                grid-template-columns: 1fr;
-              }
-              .timeline-item {
-                grid-template-columns: 1fr;
-                gap: 6px;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="page">
-            <div class="header">
-              <div>
-                <h1>Biniam Birhanu</h1>
-                <h2>Software Engineering Student | Junior Full-Stack Developer</h2>
-              </div>
-              <div class="contact">
-                <div>awsc0620@gmail.com</div>
-                <div>github.com/yodnabin-1995</div>
-                <div>linkedin.com/in/biniam-birihanu-95ba9b38b/</div>
-              </div>
-            </div>
-
-            <section class="section">
-              <h3>Professional Summary</h3>
-              <p class="summary">
-                Software Engineering student with a growing full-stack development background,
-                focused on building clean user interfaces, practical backend services, and
-                reliable database-supported applications. Comfortable working with React,
-                NestJS, Node.js, PostgreSQL, MongoDB, and REST APIs, with a strong interest
-                in continuous learning, collaboration, and real-world product development.
-              </p>
-            </section>
-
-            <section class="section">
-              <h3>Technical Skills</h3>
-              <div class="skills-grid">
-                ${skillMarkup}
-              </div>
-            </section>
-
-            <section class="section">
-              <h3>Core Strengths</h3>
-              <ul>
-                ${strengthsMarkup}
-                <li><strong>Problem Solving:</strong> Strong interest in practical solutions, maintainable code, and steady skill improvement.</li>
-                <li><strong>Collaboration:</strong> Open to internships, teamwork, and opportunities that strengthen real product experience.</li>
-              </ul>
-            </section>
-
-            <section class="section">
-              <h3>Education</h3>
-              <p class="education">
-                <strong>Bachelor of Software Engineering</strong><br />
-                Debre Markos University<br />
-                Currently a 4th year student
-              </p>
-            </section>
-
-            <section class="section">
-              <h3>Development Journey</h3>
-              ${journeyMarkup}
-            </section>
-
-            <section class="section">
-              <h3>Selected Highlights</h3>
-              <p class="project-note">
-                Built academic and portfolio-based projects while improving frontend,
-                backend, and database integration skills. Experience includes responsive
-                interface development, API-oriented backend work, and database usage with
-                PostgreSQL and MongoDB.
-              </p>
-            </section>
-
-            <section class="section">
-              <h3>Links</h3>
-              <ul>
-                ${linksMarkup}
-              </ul>
-            </section>
-          </div>
-        </body>
-      </html>
-    `;
-
-    const blob = new Blob([resumeHTML], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = "Biniam_Birhanu_Resume.html";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-
-    setNotification({
-      type: "success",
-      message: "Resume downloaded successfully.",
-    });
-  };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
-      {notification ? (
+    <div className="min-h-screen text-white">
+
+      {/* ── Orb background ── */}
+      <div className="mesh-bg" aria-hidden>
+        <div className="mesh-orb3" />
+        <div className="mesh-orb4" />
+      </div>
+
+      {/* ── Toast ── */}
+      {toast && (
         <div
-          className={`fixed left-4 right-4 top-4 z-[2000] overflow-hidden rounded-2xl text-white shadow-xl sm:left-auto sm:right-4 sm:min-w-[280px] sm:max-w-[420px] ${
-            notificationStyles[notification.type] || notificationStyles.info
+          role="alert"
+          className={`fixed right-4 top-4 z-[999] flex items-center gap-3 rounded-2xl px-5 py-4 text-sm font-medium text-white shadow-xl backdrop-blur-md sm:min-w-[280px] ${
+            toast.ok ? "bg-emerald-600/90" : "bg-red-600/90"
           }`}
         >
-          <div className="flex items-center gap-3 p-4">
-            <i
-              className={
-                notificationIcons[notification.type] || notificationIcons.info
-              }
-            />
-            <span>{notification.message}</span>
-            <button
-              className="ml-auto bg-transparent text-white"
-              aria-label="Close notification"
-              onClick={() => setNotification(null)}
-            >
-              <i className="fas fa-times" />
-            </button>
-          </div>
+          <i className={toast.ok ? "fas fa-check-circle" : "fas fa-circle-exclamation"} />
+          <span className="flex-1">{toast.msg}</span>
+          <button onClick={() => setToast(null)} className="ml-2 hover:opacity-70">
+            <i className="fas fa-times" />
+          </button>
         </div>
-      ) : null}
+      )}
 
+      {/* ══ NAV ══════════════════════════════════════════════════════════════ */}
       <header>
-        <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
-          <div
-            className={`${shell} flex min-h-[76px] items-center justify-between gap-4`}
-          >
-            <a
-              href="#home"
-              className="inline-flex items-center gap-3 font-bold"
-              onClick={() => setMenuOpen(false)}
-            >
-              <span className="grid h-11 w-11 place-items-center rounded-lg bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-950">
-                B
+        <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/30 backdrop-blur-xl">
+          <div className={`${shell} flex h-[68px] items-center justify-between`}>
+
+            {/* Logo */}
+            <a href="#" className="flex items-center gap-2.5 font-bold text-white">
+              <span className="h-9 w-9 overflow-hidden rounded-xl border border-indigo-500/40">
+                <img src="/images/logo.jpg" alt="Biniam Birhanu" className="h-full w-full object-cover" style={{ objectPosition: "center 10%" }} />
               </span>
-              <span className="hidden text-base sm:inline">Biniam Birhanu</span>
+              <span className="hidden sm:inline text-sm tracking-wide">Biniam Birhanu</span>
             </a>
 
-            <div className="flex items-center gap-3">
-              <button
-                className="h-11 w-11 rounded-xl border border-slate-200 bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-                aria-label="Toggle theme"
-                onClick={handleThemeToggle}
-              >
-                <i
-                  className={theme === "light" ? "fas fa-moon" : "fas fa-sun"}
-                />
-              </button>
+            {/* Desktop links */}
+            <ul className="hidden md:flex items-center gap-1">
+              {NAV.map((n) => (
+                <li key={n.id}>
+                  <a
+                    href={`#${n.id}`}
+                    className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
+                      active === n.id
+                        ? "bg-indigo-500/20 text-indigo-400"
+                        : "text-slate-400 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    {n.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
 
-              <button
-                className="flex h-11 w-11 flex-col justify-between rounded-xl border border-slate-200 bg-white p-3 text-slate-900 md:hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-                aria-label="Toggle navigation"
-                aria-expanded={menuOpen}
-                aria-controls="nav-menu"
-                onClick={() => setMenuOpen((current) => !current)}
-              >
-                <span className="block h-0.5 w-full rounded-full bg-current" />
-                <span className="block h-0.5 w-full rounded-full bg-current" />
-                <span className="block h-0.5 w-full rounded-full bg-current" />
-              </button>
-
-              <ul
-                id="nav-menu"
-                className={`${
-                  menuOpen ? "flex" : "hidden"
-                } absolute left-4 right-4 top-full mt-3 flex-col gap-1 rounded-2xl border border-slate-200 bg-white p-3 shadow-lg md:static md:mt-0 md:flex md:flex-row md:items-center md:gap-6 md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none dark:border-slate-800 dark:bg-slate-900 md:dark:bg-transparent`}
-              >
-                {navItems.map((item) => (
-                  <li key={item.id}>
-                    <a
-                      href={`#${item.id}`}
-                      className={`block rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                        activeSection === item.id
-                          ? "bg-slate-100 text-slate-950 dark:bg-slate-800 dark:text-white"
-                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/70 dark:hover:text-white"
-                      }`}
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Mobile toggle */}
+            <button
+              className="grid h-9 w-9 place-items-center rounded-xl border border-white/15 text-slate-300 hover:bg-white/10 md:hidden"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+            >
+              <i className={menuOpen ? "fas fa-times" : "fas fa-bars"} />
+            </button>
           </div>
+
+          {/* Mobile drawer */}
+          {menuOpen && (
+            <div className="border-t border-white/10 bg-black/60 px-5 pb-4 pt-2 backdrop-blur-xl md:hidden">
+              {NAV.map((n) => (
+                <a
+                  key={n.id}
+                  href={`#${n.id}`}
+                  onClick={() => setMenuOpen(false)}
+                  className="block rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
+                >
+                  {n.label}
+                </a>
+              ))}
+            </div>
+          )}
         </nav>
       </header>
 
+
       <main>
-        <section id="home" className={sectionSpace}>
-          <div
-            className={`${shell} grid items-center gap-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10`}
-          >
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400">
-                Software Engineering Student
-              </p>
-              <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl lg:text-6xl">
-                Junior Full-Stack Developer building clean and practical digital
-                experiences.
-              </h1>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300 sm:mt-5 sm:text-lg sm:leading-8">
-                I’m Biniam Birhanu, focused on responsive frontend development,
-                backend services, and database-backed applications with a steady
-                interest in learning, collaboration, and professional growth.
-              </p>
+        {/* ══ HERO ═════════════════════════════════════════════════════════════ */}
+        <section className="pt-10 pb-12">
+          <div className={`${shell} py-0`}>
+            <div className="flex flex-col items-center gap-10 md:flex-row md:items-center md:justify-between">
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-                <a href="#contact" className={`${primaryButton} w-full sm:w-auto`}>
-                  Contact Me
-                </a>
-                <button className={`${secondaryButton} w-full sm:w-auto`} onClick={downloadResume}>
-                  Download Resume
-                </button>
-              </div>
-
-              <div className={`${secondaryCard} mt-8 p-4 sm:p-5`}>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                  Core Stack
+              {/* Left — text */}
+              <div className="max-w-xl text-center md:text-left">
+                <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-indigo-400">
+                  Hi, I&apos;m
                 </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {[
-                    "React",
-                    "NestJS",
-                    "Node.js",
-                    "PostgreSQL",
-                    "MongoDB",
-                    "REST APIs",
-                  ].map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 sm:text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-                    >
-                      {item}
-                    </span>
-                  ))}
+                <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  Biniam Birhanu
+                </h1>
+                <p className="mt-3 text-lg font-semibold text-slate-300">
+                  Full-Stack Developer
+                </p>
+                <p className="mt-4 text-base leading-7 text-slate-400">
+                  I build secure, scalable, and user-focused systems. Specialising in
+                  Golang, Node.js, and NestJS, I turn complex engineering challenges
+                  into reliable digital products that deliver smooth user experiences.
+                </p>
+
+                {/* CTA buttons */}
+                <div className="mt-6 flex flex-wrap justify-center gap-3 md:justify-start">
+                  <a
+                    href="/images/resume.png"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-indigo-500"
+                  >
+                    <i className="fas fa-file-lines" /> View Resume
+                  </a>
+                  <a
+                    href="https://github.com/yodnabin-1995"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                  >
+                    <i className="fab fa-github" /> GitHub
+                  </a>
                 </div>
               </div>
-            </div>
 
-            <div className={`${card} overflow-hidden`}>
-              <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                  Profile Overview
-                </p>
-              </div>
-              <div className="p-4 sm:p-6">
-                <img
-                  src="/images/logo.jpg"
-                  alt="Biniam Birhanu"
-                  className="aspect-[1/1.02] max-h-64 w-full rounded-xl object-cover object-top sm:max-h-80 md:max-h-none"
-                />
-                <div className="mt-6 border-t border-slate-200 pt-6 dark:border-slate-800">
-                  <h2 className="text-2xl font-semibold">Biniam Birhanu</h2>
-                  <p className="mt-1 text-slate-600 dark:text-slate-300">
-                    Junior Full-Stack Developer
-                  </p>
+              {/* Right — code editor card */}
+              <div className="shrink-0 w-full max-w-md">
+                <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0d1117] shadow-2xl shadow-indigo-500/10">
 
-                  <div className="mt-5 space-y-3">
-                    {contactLinks.map((item) => (
-                      <a
-                        key={item.label}
-                        href={item.href}
-                        target={
-                          item.href.startsWith("http") ? "_blank" : undefined
-                        }
-                        rel={
-                          item.href.startsWith("http")
-                            ? "noreferrer"
-                            : undefined
-                        }
-                        className="flex items-center gap-3 text-sm text-slate-600 transition hover:text-slate-950 dark:text-slate-300 dark:hover:text-white"
-                      >
-                        <i className={`${item.icon} w-4`} />
-                        <span>{item.label}</span>
-                      </a>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 grid grid-cols-2 gap-3 xl:grid-cols-3">
-                    <div className={`${secondaryCard} p-4`}>
-                      <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                        Status
-                      </p>
-                      <p className="mt-1 font-semibold">
-                        Open to opportunities
-                      </p>
+                  {/* Editor title bar */}
+                  <div className="flex items-center justify-between border-b border-white/10 bg-[#161b22] px-4 py-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-3 w-3 rounded-full bg-red-500 hover:bg-red-400 transition-colors cursor-pointer" />
+                      <span className="h-3 w-3 rounded-full bg-yellow-400 hover:bg-yellow-300 transition-colors cursor-pointer" />
+                      <span className="h-3 w-3 rounded-full bg-green-500 hover:bg-green-400 transition-colors cursor-pointer" />
                     </div>
-                    <div className={`${secondaryCard} p-4`}>
-                      <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                        Focus
-                      </p>
-                      <p className="mt-1 font-semibold">Frontend & backend</p>
+                    {/* Fake tab */}
+                    <div className="flex items-center gap-1.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 px-3 py-1">
+                      <i className="devicon-typescript-plain colored text-xs" />
+                      <span className="text-xs text-slate-300 font-mono">biniam.ts</span>
                     </div>
-                    <div className={`${secondaryCard} p-4`}>
-                      <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                        Education
-                      </p>
-                      <p className="mt-1 font-semibold">4th year student</p>
+                    <div className="flex items-center gap-2 text-slate-600 text-xs">
+                      <i className="fas fa-code-branch" />
+                      <span className="font-mono">main</span>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        <section
-          id="about"
-          className={`border-y border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/40 ${sectionSpace}`}
-        >
-          <div className={shell}>
-            <SectionHeading
-              eyebrow="About"
-              title="A more focused overview of my background and direction."
-              description="I am building a strong foundation in full-stack development with an emphasis on practical learning, clean implementation, and continuous improvement."
-            />
-
-            <div className="mt-10 grid gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className={`${card} p-6 sm:p-8`}>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                  Professional Summary
-                </h3>
-                <p className="mt-4 text-slate-600 dark:text-slate-300">
-                  I am a Software Engineering student at Debre Markos University
-                  with a strong interest in full-stack development. I enjoy
-                  turning ideas into useful products through clean code,
-                  responsive layouts, and reliable application structure.
-                </p>
-                <p className="mt-4 text-slate-600 dark:text-slate-300">
-                  My experience includes frontend development with HTML, CSS,
-                  JavaScript, and React, plus backend work with NestJS, Node.js,
-                  Python, and Golang. I also work with databases such as
-                  PostgreSQL and MongoDB while continuing to improve through
-                  hands-on building.
-                </p>
-
-                <div className="mt-8 grid grid-cols-2 gap-3 xl:grid-cols-4">
-                  {statTargets.map((item, index) => (
-                    <div
-                      key={item.label}
-                      className={`${secondaryCard} p-4 text-center`}
-                    >
-                      <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-                        {stats[index]}
-                        {item.suffix || ""}
-                      </p>
-                      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-                        {item.label}
-                      </p>
+                  {/* Code body */}
+                  <div className="flex font-mono text-xs leading-6 p-4 overflow-x-auto">
+                    {/* Line numbers */}
+                    <div className="select-none pr-4 text-right text-slate-600 space-y-0.5 shrink-0">
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <div key={i}>{i + 1}</div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className={`${card} p-6`}>
-                  <h3 className="text-xl font-semibold">Key Highlights</h3>
-                  <ul className="mt-4 space-y-3 text-slate-600 dark:text-slate-300">
-                    {highlights.map((item) => (
-                      <li key={item} className="flex items-start gap-3">
-                        <span className="mt-2 h-2 w-2 rounded-full bg-slate-900 dark:bg-slate-100" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="skills" className={sectionSpace}>
-          <div className={shell}>
-            <SectionHeading
-              eyebrow="Skills"
-              title="Core capabilities across frontend, backend, and databases."
-              description="These skill areas reflect the technologies I currently use and continue to strengthen through academic and practical work."
-            />
-
-            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {skillGroups.map((group) => (
-                <article key={group.title} className={`${card} p-6 sm:p-8`}>
-                  <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-4 dark:border-slate-800">
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                      {group.title}
-                    </h3>
-                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                      Capability
-                    </span>
-                  </div>
-                  <div className="mt-6 space-y-4">
-                    {group.skills.map((skill) => (
-                      <div key={skill.name}>
-                        <div className="mb-2 flex items-center justify-between gap-4 text-sm font-semibold">
-                          <span>{skill.name}</span>
-                          <span className="text-slate-500 dark:text-slate-400">
-                            {skill.value}%
-                          </span>
-                        </div>
-                        <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-                          <div
-                            className="h-full rounded-full bg-slate-900 transition-all duration-1000 dark:bg-slate-100"
-                            style={{
-                              width: skillsVisible ? `${skill.value}%` : "0%",
-                            }}
-                          />
-                        </div>
+                    {/* Code */}
+                    <div className="space-y-0.5 text-slate-300">
+                      <div><span className="text-indigo-400">const </span><span className="text-sky-300">developer</span><span className="text-slate-400"> = </span><span className="text-yellow-300">{"{"}</span></div>
+                      <div className="pl-4"><span className="text-green-400">name</span><span className="text-slate-500">: </span><span className="text-orange-300">"Biniam Birhanu"</span><span className="text-slate-500">,</span></div>
+                      <div className="pl-4"><span className="text-green-400">role</span><span className="text-slate-500">: </span><span className="text-orange-300">"Full-Stack Developer"</span><span className="text-slate-500">,</span></div>
+                      <div className="pl-4"><span className="text-green-400">location</span><span className="text-slate-500">: </span><span className="text-orange-300">"Ethiopia 🇪🇹"</span><span className="text-slate-500">,</span></div>
+                      <div className="pl-4"><span className="text-green-400">frontend</span><span className="text-slate-500">: </span><span className="text-sky-400">["React"<span className="text-slate-500">,</span> "TypeScript"]</span><span className="text-slate-500">,</span></div>
+                      <div className="pl-4"><span className="text-green-400">backend</span><span className="text-slate-500">: </span><span className="text-sky-400">["NestJS"<span className="text-slate-500">,</span> "Golang"<span className="text-slate-500">,</span> "Node.js"]</span><span className="text-slate-500">,</span></div>
+                      <div className="pl-4"><span className="text-green-400">database</span><span className="text-slate-500">: </span><span className="text-sky-400">["MongoDB"<span className="text-slate-500">,</span> "PostgreSQL"]</span><span className="text-slate-500">,</span></div>
+                      <div className="pl-4"><span className="text-green-400">devops</span><span className="text-slate-500">: </span><span className="text-sky-400">["Docker"<span className="text-slate-500">,</span> "Apache Pulsar"]</span><span className="text-slate-500">,</span></div>
+                      <div className="pl-4"><span className="text-green-400">available</span><span className="text-slate-500">: </span><span className="text-indigo-400">true</span><span className="text-slate-500">,</span></div>
+                      <div><span className="text-yellow-300">{"}"}</span><span className="text-slate-500">;</span></div>
+                      <div className="pt-1 text-slate-600"><span className="text-slate-500">// </span><span className="text-emerald-400/70">open to opportunities ✓</span></div>
+                      <div className="flex items-center gap-0.5">
+                        <span className="text-slate-600">{">"}</span>
+                        <span className="inline-block h-3.5 w-2 bg-indigo-400 ml-1" style={{ animation: "blink 1.1s step-end infinite" }} />
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </article>
-              ))}
-            </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {focusAreas.map((item) => (
-                <div
-                  key={item.title}
-                  className={`${secondaryCard} border-l-4 border-l-slate-900 p-6 dark:border-l-slate-100`}
-                >
-                  <i
-                    className={`${item.icon} text-lg text-slate-700 dark:text-slate-200`}
-                  />
-                  <h3 className="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                    {item.description}
-                  </p>
+                  {/* Status bar */}
+                  <div className="flex items-center justify-between border-t border-white/10 bg-indigo-600/20 px-4 py-1.5 text-[10px] font-mono text-slate-400">
+                    <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-1"><i className="fas fa-check-circle text-emerald-400" /> TypeScript</span>
+                      <span>UTF-8</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span>Ln 12, Col 1</span>
+                      <span className="flex items-center gap-1 text-emerald-400"><i className="fas fa-circle text-[8px]" /> Ready</span>
+                    </div>
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <section
-          id="timeline"
-          className={`border-y border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/40 ${sectionSpace}`}
-        >
-          <div className={`${shell} max-w-5xl`}>
-            <SectionHeading
-              eyebrow="Journey"
-              title="My development path so far."
-              description="A simple timeline showing how my interest in software has grown into focused full-stack development work."
+        {/* ══ SKILLS ═══════════════════════════════════════════════════════════ */}
+        <section id="skills" className={sec}>
+          <div className={shell}>
+            <SectionTitle
+              label="Skills"
+              title="Skills"
+              sub="Check out some of the skills i've been working on:"
             />
+            <SkillsGrid />
+          </div>
+        </section>
 
-            <div className="mt-10 space-y-4">
-              {journey.map((item) => (
-                <article
-                  key={`${item.year}-${item.title}`}
-                  className={`${card} grid gap-4 p-5 sm:p-6 md:grid-cols-[100px_1fr] md:p-7`}
+        {/* ══ ABOUT ════════════════════════════════════════════════════════════ */}
+        <section id="about" className={sec}>
+          <div className={shell}>
+            <SectionTitle label="About Me" title="Who I Am" sub="A passionate engineer who turns complex problems into elegant, scalable solutions." />
+
+            {/* Top — profile + bio */}
+            <div className="grid gap-10 md:grid-cols-[auto_1fr] md:items-start lg:gap-16 mb-10">
+
+              {/* Left — avatar + quick info */}
+              <div className="flex flex-col items-center gap-4">
+                <div className="h-40 w-40 overflow-hidden rounded-2xl border-2 border-indigo-500/40 shadow-2xl shadow-indigo-500/20">
+                  <img
+                    src="/images/logo.jpg"
+                    alt="Biniam Birhanu"
+                    className="h-full w-full object-cover"
+                    style={{ objectPosition: "center 10%" }}
+                  />
+                </div>
+                <div className="text-center">
+                  <p className="text-base font-bold text-white">Biniam Birhanu</p>
+                  <p className="text-xs text-indigo-400 mt-0.5">Full-Stack Developer</p>
+                </div>
+                {/* Social quick links */}
+                <div className="flex gap-2">
+                  <a href="https://github.com/yodnabin-1995" target="_blank" rel="noreferrer"
+                    className="grid h-9 w-9 place-items-center rounded-xl border border-white/15 text-slate-400 hover:border-indigo-500/50 hover:text-indigo-400 transition">
+                    <i className="fab fa-github" />
+                  </a>
+                  <a href="https://www.linkedin.com/in/biniam-birihanu-95ba9b38b/" target="_blank" rel="noreferrer"
+                    className="grid h-9 w-9 place-items-center rounded-xl border border-white/15 text-slate-400 hover:border-indigo-500/50 hover:text-indigo-400 transition">
+                    <i className="fab fa-linkedin" />
+                  </a>
+                  <a href="mailto:awsc0620@gmail.com"
+                    className="grid h-9 w-9 place-items-center rounded-xl border border-white/15 text-slate-400 hover:border-indigo-500/50 hover:text-indigo-400 transition">
+                    <i className="fas fa-envelope" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Right — bio */}
+              <div className="space-y-4 text-base leading-7 text-slate-400">
+                <h3 className="text-xl font-bold text-white">
+                  Building reliable software, one line at a time.
+                </h3>
+                <p>
+                  I'm a <span className="font-semibold text-white">Full-Stack Developer</span> with
+                  hands-on experience building clean, performant, and genuinely useful products —
+                  from responsive frontends to robust backend APIs and real-time systems.
+                </p>
+                <p>
+                  On the frontend I work with <span className="text-white">React</span> and{" "}
+                  <span className="text-white">TypeScript</span>. On the backend I design APIs
+                  with <span className="text-white">NestJS</span>,{" "}
+                  <span className="text-white">Node.js</span>, and{" "}
+                  <span className="text-white">Golang</span>, backed by{" "}
+                  <span className="text-white">PostgreSQL</span>,{" "}
+                  <span className="text-white">MongoDB</span>, and{" "}
+                  <span className="text-white">MySQL</span>. I also work with event-driven
+                  architectures using <span className="text-white">Apache Pulsar</span> and
+                  containerise everything with <span className="text-white">Docker</span>.
+                </p>
+                <p>
+                  I'm open to <span className="text-white">internships</span>,{" "}
+                  <span className="text-white">freelance</span>, and{" "}
+                  <span className="text-white">collaborative</span> opportunities where I
+                  can deliver meaningful work and keep growing as an engineer.
+                </p>
+
+                {/* Interest tags */}
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {["Clean UI", "REST APIs", "gRPC", "System Design", "Open Source", "Event-Driven", "CI/CD", "Collaboration"].map((t) => (
+                    <span key={t} className="rounded-lg border border-indigo-500/25 bg-indigo-500/10 px-3 py-1.5 text-xs font-medium text-indigo-300">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                {/* CTAs */}
+                <div className="flex flex-wrap gap-3 pt-2">
+                  <a href="#contact" className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500">
+                    <i className="fas fa-paper-plane" /> Get in Touch
+                  </a>
+                  <a href="#projects" className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20">
+                    <i className="fas fa-folder-open" /> View Projects
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Stats strip */}
+            <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {[
+                { value: "2+",  label: "Years of Experience" },
+                { value: "10+", label: "Projects Completed"  },
+                { value: "5+",  label: "Technologies Mastered" },
+                { value: "3+",  label: "Domains Shipped"      },
+              ].map((s) => (
+                <div key={s.label} className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur-sm">
+                  <p className="text-3xl font-extrabold text-indigo-400">{s.value}</p>
+                  <p className="mt-1 text-xs font-medium text-slate-400">{s.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Expertise cards */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { icon: "fas fa-code",           label: "Frontend",   desc: "React, TypeScript, Tailwind CSS, Next.js"         },
+                { icon: "fas fa-server",          label: "Backend",    desc: "Node.js, NestJS, Golang, Express.js, gRPC"        },
+                { icon: "fas fa-database",        label: "Databases",  desc: "PostgreSQL, MongoDB, MySQL, Redis"                },
+                { icon: "fas fa-cloud",           label: "DevOps",     desc: "Docker, Kubernetes, Git, AWS S3, CI/CD"           },
+                { icon: "fas fa-bolt",            label: "APIs",       desc: "REST, gRPC, WebSockets, GraphQL, Apache Pulsar"   },
+                { icon: "fas fa-shield-halved",   label: "Security",   desc: "JWT, OAuth2, Rate Limiting, Input Validation"     },
+              ].map((card) => (
+                <div
+                  key={card.label}
+                  className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm transition hover:border-indigo-500/40 hover:bg-white/[0.07]"
                 >
-                  <div className="inline-flex h-fit items-center justify-center rounded-md bg-slate-100 px-4 py-2 text-sm font-bold text-slate-900 dark:bg-slate-800 dark:text-slate-100">
-                    {item.year}
+                  <div className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-indigo-500/15 text-indigo-400">
+                    <i className={card.icon} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2 text-slate-600 dark:text-slate-300">
-                      {item.description}
-                    </p>
+                    <h4 className="mb-1 text-sm font-bold text-white">{card.label}</h4>
+                    <p className="text-xs leading-5 text-slate-400">{card.desc}</p>
                   </div>
-                </article>
+                </div>
+                ))}
+              </div>
+          </div>
+        </section>
+        <section id="projects" className={sec}>
+          <div className={shell}>
+            <SectionTitle
+              label="Projects"
+              title="Projects"
+              sub="Below, you'll find an overview of the various projects i've had the privilege to work on thus far:"
+            />
+            <div className="grid gap-6 sm:grid-cols-2">
+              {PROJECTS.map((p) => (
+                <ProjectCard key={p.title} project={p} />
               ))}
             </div>
           </div>
         </section>
 
-        <section id="contact" className={sectionSpace}>
+        {/* ══ CONTACT ══════════════════════════════════════════════════════════ */}
+        <section id="contact" className={sec}>
           <div className={shell}>
-            <SectionHeading
-              eyebrow="Contact"
-              title="Let’s connect for internships, collaboration, or project opportunities."
-              description="If you have an opportunity, project, or team collaboration in mind, feel free to send a message."
+            <SectionTitle
+              label="Contact"
+              title="Let's connect!"
+              sub="Open to new opportunities and collaborations. Interested in working together or have a project in mind? I'm always eager to help create impactful digital experiences."
             />
 
-            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className={`${card} p-6 sm:p-8`}>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                  Contact Information
-                </h3>
-                <p className="mt-4 text-slate-600 dark:text-slate-300">
-                  I’m open to internships, freelance opportunities, and
-                  collaboration that helps me keep growing as a developer while
-                  contributing meaningful work.
+            <div className="grid gap-6 md:grid-cols-2 md:items-start">
+
+              {/* Left — info */}
+              <div className="space-y-4">
+                <p className="text-slate-400">
+                  Don&apos;t hesitate to reach out for inquiries or potential collaborations.
                 </p>
 
-                <div className="mt-6 grid gap-3">
-                  {contactLinks.map((item) => (
-                    <a
-                      key={item.label}
-                      className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-4 text-slate-700 transition hover:border-slate-400 hover:text-slate-950 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:text-white"
-                      href={item.href}
-                      target={
-                        item.href.startsWith("http") ? "_blank" : undefined
-                      }
-                      rel={
-                        item.href.startsWith("http") ? "noreferrer" : undefined
-                      }
-                    >
-                      <i
-                        className={`${item.icon} text-slate-700 dark:text-slate-200`}
-                      />
-                      <span>{item.label}</span>
-                    </a>
-                  ))}
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">Contact me at</p>
+                  <a
+                    href="mailto:awsc0620@gmail.com"
+                    className="text-sm font-semibold text-indigo-400 hover:underline"
+                  >
+                    awsc0620@gmail.com
+                  </a>
                 </div>
               </div>
 
+              {/* Right — form */}
               <form
-                className={`${card} grid gap-4 p-6 sm:p-8`}
-                onSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md sm:p-8"
               >
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                  Send a Message
-                </h3>
-                <label className="grid gap-2">
-                  <span className="text-sm font-semibold">Name</span>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Your name"
-                    value={form.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-100"
-                  />
-                </label>
-                <label className="grid gap-2">
-                  <span className="text-sm font-semibold">Email</span>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Your email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-100"
-                  />
-                </label>
-                <label className="grid gap-2">
-                  <span className="text-sm font-semibold">Message</span>
+                <h3 className="font-bold text-white">Get in touch</h3>
+                <p className="text-sm text-slate-400">Send message</p>
+
+                {[
+                  { id: "name",  label: "Name",  type: "text",  ph: "Your name"     },
+                  { id: "email", label: "Email", type: "email", ph: "your@email.com" },
+                ].map((f) => (
+                  <label key={f.id} className="grid gap-1.5">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">{f.label}</span>
+                    <input
+                      type={f.type}
+                      name={f.id}
+                      placeholder={f.ph}
+                      value={form[f.id]}
+                      onChange={onChange}
+                      required
+                      className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                  </label>
+                ))}
+
+                <label className="grid gap-1.5">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">Message</span>
                   <textarea
                     name="message"
-                    rows="6"
-                    placeholder="Tell me about your project or opportunity"
+                    rows={5}
+                    placeholder="Tell me about your project or opportunity…"
                     value={form.message}
-                    onChange={handleChange}
+                    onChange={onChange}
                     required
-                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-100"
+                    className="w-full resize-none rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
                   />
                 </label>
+
                 <button
                   type="submit"
                   disabled={sending}
-                  className={`${primaryButton} w-full`}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:opacity-60"
                 >
-                  {sending ? "Sending..." : "Send Message"}
+                  {sending ? (
+                    <><i className="fas fa-spinner fa-spin" /> Sending…</>
+                  ) : (
+                    <><i className="fas fa-paper-plane" /> Send message</>
+                  )}
                 </button>
               </form>
             </div>
@@ -1039,32 +738,45 @@ function App() {
         </section>
       </main>
 
-      <footer className="border-t border-slate-200 bg-white py-8 dark:border-slate-800 dark:bg-slate-900">
-        <div className={`${shell} flex flex-col items-start justify-between gap-4 md:flex-row md:items-center`}>
-          <div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-              Biniam Birhanu
-            </h3>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              Software Engineering student focused on frontend, backend, and
-              database-supported applications.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold text-slate-600 dark:text-slate-300">
-            {navItems.map((item) => (
+
+      {/* ══ FOOTER ═══════════════════════════════════════════════════════════ */}
+      <footer className="border-t border-white/10 bg-black/20 py-8 backdrop-blur-xl">
+        <div className={`${shell} flex flex-col items-center justify-between gap-6 sm:flex-row`}>
+
+          {/* Nav links */}
+          <nav className="flex gap-6">
+            {NAV.map((n) => (
               <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="transition hover:text-slate-950 dark:hover:text-white"
+                key={n.id}
+                href={`#${n.id}`}
+                className="text-sm font-medium text-slate-400 transition hover:text-indigo-400"
               >
-                {item.label}
+                {n.label}
+              </a>
+            ))}
+          </nav>
+
+          {/* Social icons — all */}
+          <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
+            {SOCIAL.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target={s.href.startsWith("http") ? "_blank" : undefined}
+                rel="noreferrer"
+                aria-label={s.label}
+                className="grid h-9 w-9 place-items-center rounded-xl border border-white/15 text-slate-400 transition hover:border-indigo-500/50 hover:text-indigo-400"
+              >
+                <i className={s.icon} />
               </a>
             ))}
           </div>
+
+          <p className="text-xs text-slate-500">
+            {new Date().getFullYear()}, Biniam Birhanu. all rights reserved.
+          </p>
         </div>
       </footer>
     </div>
   );
 }
-
-export default App;

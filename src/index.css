@@ -3,11 +3,140 @@
 @tailwind utilities;
 
 @layer base {
-    html {
-        scroll-behavior: smooth;
-    }
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-    body {
-        @apply bg-slate-50 text-slate-900 antialiased transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100;
-    }
+  body {
+    @apply text-slate-100 antialiased;
+    background: #0a0a0f;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-indigo-500;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   BACKGROUND — dark navy + animated purple wave lines
+   ═══════════════════════════════════════════════════ */
+
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #0d0d1a;
+  overflow: hidden;
+}
+
+/* Subtle purple glow — top-right corner */
+.mesh-bg::before {
+  content: "";
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  top: -80px;
+  right: -80px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(120, 40, 200, 0.35) 0%,
+    rgba(90,  20, 170, 0.15) 45%,
+    transparent 70%
+  );
+  filter: blur(90px);
+}
+
+/* Subtle purple glow — bottom-left corner */
+.mesh-bg::after {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  bottom: -100px;
+  left: -80px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(100, 30, 180, 0.28) 0%,
+    rgba(70,  15, 140, 0.12) 50%,
+    transparent 70%
+  );
+  filter: blur(80px);
+}
+
+/* ── Wave lines SVG layer (right side) ── */
+.mesh-orb3 {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='900' viewBox='0 0 900 900'%3E%3Cg fill='none' stroke='%237c3aed' stroke-width='1.1' stroke-opacity='0.18'%3E%3Cpath d='M900 200 Q750 250 700 400 Q650 550 800 600 Q950 650 900 800'/%3E%3Cpath d='M900 170 Q740 230 685 390 Q630 550 790 610 Q950 670 895 820'/%3E%3Cpath d='M900 140 Q730 210 670 380 Q610 550 780 620 Q950 690 890 840'/%3E%3Cpath d='M900 110 Q720 190 655 370 Q590 550 770 630 Q950 710 885 860'/%3E%3Cpath d='M900 80  Q710 170 640 360 Q570 550 760 640 Q950 730 880 880'/%3E%3Cpath d='M900 50  Q700 150 625 350 Q550 550 750 650 Q950 750 875 900'/%3E%3Cpath d='M900 20  Q690 130 610 340 Q530 550 740 660 Q950 770 870 920'/%3E%3Cpath d='M920 200 Q760 260 710 415 Q660 570 810 615 Q960 660 910 800'/%3E%3Cpath d='M920 160 Q750 240 695 400 Q640 560 800 625 Q960 690 905 830'/%3E%3Cpath d='M920 120 Q740 220 680 385 Q620 550 790 635 Q960 720 900 860'/%3E%3Cpath d='M940 250 Q780 290 730 430 Q680 570 830 610 Q980 650 940 790'/%3E%3Cpath d='M940 210 Q770 270 715 415 Q660 560 820 620 Q980 680 935 820'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-size: 55% auto;
+  opacity: 1;
+  animation: waveDrift 12s ease-in-out infinite alternate;
+}
+
+@keyframes waveDrift {
+  0%   { background-position: right top;    background-size: 55% auto; }
+  50%  { background-position: right 30px;   background-size: 57% auto; }
+  100% { background-position: right -20px;  background-size: 55% auto; }
+}
+
+/* Bottom-left mirror wave */
+.mesh-orb4 {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='900' viewBox='0 0 900 900'%3E%3Cg fill='none' stroke='%237c3aed' stroke-width='1' stroke-opacity='0.12'%3E%3Cpath d='M0 700 Q150 650 200 500 Q250 350 100 300 Q-50 250 0 100'/%3E%3Cpath d='M0 730 Q160 670 215 515 Q270 360 110 305 Q-50 250 5 90'/%3E%3Cpath d='M0 760 Q170 690 230 530 Q290 370 120 310 Q-50 250 10 80'/%3E%3Cpath d='M0 790 Q180 710 245 545 Q310 380 130 315 Q-50 250 15 70'/%3E%3Cpath d='M0 820 Q190 730 260 560 Q330 390 140 320 Q-50 250 20 60'/%3E%3Cpath d='M0 850 Q200 750 275 575 Q350 400 150 325 Q-50 250 25 50'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 45% auto;
+  animation: waveDriftLeft 14s ease-in-out infinite alternate;
+}
+
+@keyframes waveDriftLeft {
+  0%   { background-position: left bottom;     background-size: 45% auto; }
+  50%  { background-position: left -20px bottom; background-size: 47% auto; }
+  100% { background-position: left bottom 20px;  background-size: 45% auto; }
+}
+
+/* ═══════════════════════════════════════════════════
+   Skill badge animations
+   ═══════════════════════════════════════════════════ */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.skill-badge {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.skill-badge:hover {
+  border-color: rgba(99, 102, 241, 0.6) !important;
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.4), 0 4px 20px rgba(99,102,241,0.15);
+}
+
+.skill-icon {
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-block;
+}
+.skill-badge:hover .skill-icon {
+  transform: scale(1.25) rotate(-5deg);
+}
+
+/* ═══════════════════════════════════════════════════
+   Cursor blink for code card
+   ═══════════════════════════════════════════════════ */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
 }
