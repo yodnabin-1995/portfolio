@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
+import Navbar from "./components/Navbar";
 
 // ── Data ───────────────────────────────────────────────────────────────────────
 const NAV = [
@@ -327,63 +328,7 @@ export default function App() {
       )}
 
       {/* ══ NAV ══════════════════════════════════════════════════════════════ */}
-      <header>
-        <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/30 backdrop-blur-xl">
-          <div className={`${shell} flex h-[68px] items-center justify-between`}>
-
-            {/* Logo */}
-            <a href="#" className="flex items-center gap-2.5 font-bold text-white">
-              <span className="h-9 w-9 overflow-hidden rounded-xl border border-indigo-500/40">
-                <img src="/images/logo.jpg" alt="Biniam Birhanu" className="h-full w-full object-cover" style={{ objectPosition: "center 10%" }} />
-              </span>
-              <span className="hidden sm:inline text-sm tracking-wide">Biniam Birhanu</span>
-            </a>
-
-            {/* Desktop links */}
-            <ul className="hidden md:flex items-center gap-1">
-              {NAV.map((n) => (
-                <li key={n.id}>
-                  <a
-                    href={`#${n.id}`}
-                    className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
-                      active === n.id
-                        ? "bg-indigo-500/20 text-indigo-400"
-                        : "text-slate-400 hover:bg-white/10 hover:text-white"
-                    }`}
-                  >
-                    {n.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            {/* Mobile toggle */}
-            <button
-              className="grid h-9 w-9 place-items-center rounded-xl border border-white/15 text-slate-300 hover:bg-white/10 md:hidden"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Toggle menu"
-            >
-              <i className={menuOpen ? "fas fa-times" : "fas fa-bars"} />
-            </button>
-          </div>
-
-          {/* Mobile drawer */}
-          {menuOpen && (
-            <div className="border-t border-white/10 bg-black/60 px-5 pb-4 pt-2 backdrop-blur-xl md:hidden">
-              {NAV.map((n) => (
-                <a
-                  key={n.id}
-                  href={`#${n.id}`}
-                  onClick={() => setMenuOpen(false)}
-                  className="block rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
-                >
-                  {n.label}
-                </a>
-              ))}
-            </div>
-          )}
-        </nav>
-      </header>
+      <Navbar active={active} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
 
       <main>
