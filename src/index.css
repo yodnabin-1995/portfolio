@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Scroll progress bar */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #a78bfa);
+  z-index: 9999;
+  transition: width 0.1s linear;
+}
+
+/* Back to top button */
+.back-to-top {
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.back-to-top.hidden-btn { opacity: 0; pointer-events: none; transform: translateY(16px); }
+.back-to-top.visible-btn { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+/* Typing cursor */
+@keyframes typingBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: #a78bfa;
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: typingBlink 0.9s step-end infinite;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

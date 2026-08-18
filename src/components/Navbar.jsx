@@ -29,11 +29,12 @@ export default function Navbar({ active, menuOpen, setMenuOpen }) {
         <div className={`${shell} flex h-[68px] items-center justify-between`}>
 
           {/* Logo */}
-          <a href="#" className="nav-logo flex items-center gap-2.5 font-bold text-white">
-            <span className="nav-logo-img h-9 w-9 overflow-hidden rounded-xl border border-indigo-500/40">
-              <img src="/images/logo.jpg" alt="Biniam Birhanu" className="h-full w-full object-cover" style={{ objectPosition: "center 10%" }} />
-            </span>
-            <span className="hidden sm:inline text-sm tracking-wide nav-logo-text">Biniam Birhanu</span>
+          <a href="#" className="nav-logo flex items-center" aria-label="Home">
+            <img
+              src="/images/biniamlogo.png"
+              alt="Biniam Birhanu Logo"
+              style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "12px" }}
+            />
           </a>
 
           {/* Desktop links */}
@@ -113,14 +114,23 @@ export default function Navbar({ active, menuOpen, setMenuOpen }) {
               key={n.id}
               href={`#${n.id}`}
               onClick={() => setMenuOpen(false)}
-              className={`nav-drawer-link block rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-white/10 hover:text-white ${
+              className={`nav-drawer-link flex items-center justify-between rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-white/10 hover:text-white ${
                 active === n.id ? "text-indigo-400 bg-indigo-500/10" : "text-slate-300"
               }`}
               style={{ animationDelay: `${i * 0.05}s` }}
             >
-              {n.label}
+              <span>{n.label}</span>
+              {active === n.id && <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />}
             </a>
           ))}
+          <a
+            href="#contact"
+            onClick={() => setMenuOpen(false)}
+            className="nav-drawer-link mt-2 flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
+            style={{ animationDelay: `${NAV.length * 0.05}s` }}
+          >
+            <i className="fas fa-bolt text-xs" /> Hire me
+          </a>
         </div>
       </nav>
     </header>

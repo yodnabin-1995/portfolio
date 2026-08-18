@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import emailjs from "@emailjs/browser";
 import Navbar from "./components/Navbar";
 
@@ -244,16 +244,66 @@ function ProjectCard({ project }) {
 
 // ── App ────────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [active,   setActive]   = useState("about");
-  const [form,     setForm]     = useState({ name: "", email: "", message: "" });
-  const [sending,  setSending]  = useState(false);
-  const [toast,    setToast]    = useState(null);
+  const [menuOpen,    setMenuOpen]    = useState(false);
+  const [active,      setActive]      = useState("about");
+  const [form,        setForm]        = useState({ name: "", email: "", message: "" });
+  const [sending,     setSending]     = useState(false);
+  const [toast,       setToast]       = useState(null);
+  const [showTop,     setShowTop]     = useState(false);
+  const [typedRole,   setTypedRole]   = useState("");
+  const roleRef = useRef(0);
+
+  const ROLES = ["Full-Stack Developer", "Backend Engineer", "React Developer", "Open Source Enthusiast"];
 
   // Always dark
   useEffect(() => {
     document.documentElement.classList.add("dark");
     document.documentElement.style.colorScheme = "dark";
+  }, []);
+
+  // Scroll progress bar + back-to-top visibility
+  useEffect(() => {
+    const bar = document.getElementById("scroll-progress");
+    const onScroll = () => {
+      const scrolled = window.scrollY;
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      if (bar) bar.style.width = `${(scrolled / total) * 100}%`;
+      setShowTop(scrolled > 400);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Typing animation
+  useEffect(() => {
+    const roles = ROLES;
+    let roleIdx = 0;
+    let charIdx = 0;
+    let deleting = false;
+    let timeout;
+
+    const tick = () => {
+      const current = roles[roleIdx];
+      if (!deleting) {
+        charIdx++;
+        setTypedRole(current.slice(0, charIdx));
+        if (charIdx === current.length) {
+          timeout = setTimeout(() => { deleting = true; tick(); }, 1800);
+          return;
+        }
+      } else {
+        charIdx--;
+        setTypedRole(current.slice(0, charIdx));
+        if (charIdx === 0) {
+          deleting = false;
+          roleIdx = (roleIdx + 1) % roles.length;
+        }
+      }
+      timeout = setTimeout(tick, deleting ? 45 : 80);
+    };
+
+    timeout = setTimeout(tick, 600);
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => { emailjs.init("ckeNV1U1JhCDS4_Yp"); }, []);
@@ -305,6 +355,20 @@ export default function App() {
   return (
     <div className="min-h-screen text-white">
 
+      {/* Scroll progress bar */}
+      <div id="scroll-progress" style={{ width: "0%" }} />
+
+      {/* Back to top */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Back to top"
+        className={`back-to-top fixed bottom-6 right-6 z-50 grid h-11 w-11 place-items-center rounded-xl border border-indigo-500/40 bg-indigo-600/90 text-white shadow-lg shadow-indigo-500/30 backdrop-blur hover:bg-indigo-500 ${
+          showTop ? "visible-btn" : "hidden-btn"
+        }`}
+      >
+        <i className="fas fa-arrow-up text-sm" />
+      </button>
+
       {/* ── Orb background ── */}
       <div className="mesh-bg" aria-hidden>
         <div className="mesh-orb3" />
@@ -346,7 +410,7 @@ export default function App() {
                   Biniam Birhanu
                 </h1>
                 <p className="mt-3 text-lg font-semibold text-slate-300">
-                  Full-Stack Developer
+                  <span>{typedRole}</span><span className="typing-cursor" />
                 </p>
                 <p className="mt-4 text-base leading-7 text-slate-400">
                   I build secure, scalable, and user-focused systems. Specialising in
@@ -357,12 +421,12 @@ export default function App() {
                 {/* CTA buttons */}
                 <div className="mt-6 flex flex-wrap justify-center gap-3 md:justify-start">
                   <a
-                    href="/images/resume.png"
+                    href="https://drive.google.com/file/d/141WzkKh67lbioKErz9DvISQj0hLjqgF_/view?usp=drive_open"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-indigo-500"
                   >
-                    <i className="fas fa-file-lines" /> View Resume
+                    <i className="fas fa-file-pdf" /> View Resume
                   </a>
                   <a
                     href="https://github.com/yodnabin-1995"
@@ -376,64 +440,139 @@ export default function App() {
               </div>
 
               {/* Right — code editor card */}
-              <div className="shrink-0 w-full max-w-md">
-                <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0d1117] shadow-2xl shadow-indigo-500/10">
+              <div className="shrink-0 w-full max-w-lg">
+                {/* Glow ring around the card */}
+                <div className="relative">
+                  <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-sky-500/20 blur-xl opacity-70 animate-pulse" />
+                  <div className="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-[#0d1117] shadow-2xl shadow-indigo-500/20">
 
-                  {/* Editor title bar */}
-                  <div className="flex items-center justify-between border-b border-white/10 bg-[#161b22] px-4 py-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-3 w-3 rounded-full bg-red-500 hover:bg-red-400 transition-colors cursor-pointer" />
-                      <span className="h-3 w-3 rounded-full bg-yellow-400 hover:bg-yellow-300 transition-colors cursor-pointer" />
-                      <span className="h-3 w-3 rounded-full bg-green-500 hover:bg-green-400 transition-colors cursor-pointer" />
-                    </div>
-                    {/* Fake tab */}
-                    <div className="flex items-center gap-1.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 px-3 py-1">
-                      <i className="devicon-typescript-plain colored text-xs" />
-                      <span className="text-xs text-slate-300 font-mono">biniam.ts</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-600 text-xs">
-                      <i className="fas fa-code-branch" />
-                      <span className="font-mono">main</span>
-                    </div>
-                  </div>
-
-                  {/* Code body */}
-                  <div className="flex font-mono text-xs leading-6 p-4 overflow-x-auto">
-                    {/* Line numbers */}
-                    <div className="select-none pr-4 text-right text-slate-600 space-y-0.5 shrink-0">
-                      {Array.from({ length: 12 }, (_, i) => (
-                        <div key={i}>{i + 1}</div>
-                      ))}
-                    </div>
-                    {/* Code */}
-                    <div className="space-y-0.5 text-slate-300">
-                      <div><span className="text-indigo-400">const </span><span className="text-sky-300">developer</span><span className="text-slate-400"> = </span><span className="text-yellow-300">{"{"}</span></div>
-                      <div className="pl-4"><span className="text-green-400">name</span><span className="text-slate-500">: </span><span className="text-orange-300">"Biniam Birhanu"</span><span className="text-slate-500">,</span></div>
-                      <div className="pl-4"><span className="text-green-400">role</span><span className="text-slate-500">: </span><span className="text-orange-300">"Full-Stack Developer"</span><span className="text-slate-500">,</span></div>
-                      <div className="pl-4"><span className="text-green-400">location</span><span className="text-slate-500">: </span><span className="text-orange-300">"Ethiopia 🇪🇹"</span><span className="text-slate-500">,</span></div>
-                      <div className="pl-4"><span className="text-green-400">frontend</span><span className="text-slate-500">: </span><span className="text-sky-400">["React"<span className="text-slate-500">,</span> "TypeScript"]</span><span className="text-slate-500">,</span></div>
-                      <div className="pl-4"><span className="text-green-400">backend</span><span className="text-slate-500">: </span><span className="text-sky-400">["NestJS"<span className="text-slate-500">,</span> "Golang"<span className="text-slate-500">,</span> "Node.js"]</span><span className="text-slate-500">,</span></div>
-                      <div className="pl-4"><span className="text-green-400">database</span><span className="text-slate-500">: </span><span className="text-sky-400">["MongoDB"<span className="text-slate-500">,</span> "PostgreSQL"]</span><span className="text-slate-500">,</span></div>
-                      <div className="pl-4"><span className="text-green-400">devops</span><span className="text-slate-500">: </span><span className="text-sky-400">["Docker"<span className="text-slate-500">,</span> "Apache Pulsar"]</span><span className="text-slate-500">,</span></div>
-                      <div className="pl-4"><span className="text-green-400">available</span><span className="text-slate-500">: </span><span className="text-indigo-400">true</span><span className="text-slate-500">,</span></div>
-                      <div><span className="text-yellow-300">{"}"}</span><span className="text-slate-500">;</span></div>
-                      <div className="pt-1 text-slate-600"><span className="text-slate-500">// </span><span className="text-emerald-400/70">open to opportunities ✓</span></div>
-                      <div className="flex items-center gap-0.5">
-                        <span className="text-slate-600">{">"}</span>
-                        <span className="inline-block h-3.5 w-2 bg-indigo-400 ml-1" style={{ animation: "blink 1.1s step-end infinite" }} />
+                    {/* Editor title bar */}
+                    <div className="flex items-center justify-between border-b border-white/10 bg-[#161b22] px-4 py-3">
+                      <div className="flex items-center gap-1.5">
+                        <span className="h-3.5 w-3.5 rounded-full bg-red-500 hover:bg-red-400 transition-colors cursor-pointer shadow-sm shadow-red-500/50" />
+                        <span className="h-3.5 w-3.5 rounded-full bg-yellow-400 hover:bg-yellow-300 transition-colors cursor-pointer shadow-sm shadow-yellow-400/50" />
+                        <span className="h-3.5 w-3.5 rounded-full bg-green-500 hover:bg-green-400 transition-colors cursor-pointer shadow-sm shadow-green-500/50" />
+                      </div>
+                      {/* Fake tab — glowing */}
+                      <div className="flex items-center gap-1.5 rounded-md bg-indigo-500/20 border border-indigo-500/40 px-3 py-1 shadow-sm shadow-indigo-500/20">
+                        <i className="devicon-typescript-plain colored text-sm" />
+                        <span className="text-xs text-indigo-200 font-mono font-semibold">biniam.ts</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-500 text-xs">
+                        <i className="fas fa-code-branch text-indigo-400" />
+                        <span className="font-mono text-indigo-300">main</span>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Status bar */}
-                  <div className="flex items-center justify-between border-t border-white/10 bg-indigo-600/20 px-4 py-1.5 text-[10px] font-mono text-slate-400">
-                    <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1"><i className="fas fa-check-circle text-emerald-400" /> TypeScript</span>
-                      <span>UTF-8</span>
+                    {/* Code body */}
+                    <div className="flex font-mono text-sm leading-7 p-5 overflow-x-auto">
+                      {/* Line numbers */}
+                      <div className="select-none pr-5 text-right text-slate-600 space-y-0 shrink-0 border-r border-white/5 mr-4">
+                        {Array.from({ length: 13 }, (_, i) => (
+                          <div key={i} className="hover:text-slate-400 transition-colors">{i + 1}</div>
+                        ))}
+                      </div>
+                      {/* Code */}
+                      <div className="space-y-0 text-slate-300">
+                        <div>
+                          <span className="text-purple-400 font-bold">const </span>
+                          <span className="text-sky-300 font-semibold">developer</span>
+                          <span className="text-slate-400"> = </span>
+                          <span className="text-yellow-300 font-bold">{"{"}</span>
+                        </div>
+                        <div className="pl-5">
+                          <span className="text-emerald-400">name</span>
+                          <span className="text-slate-500">: </span>
+                          <span className="text-amber-300 font-medium">"Biniam Birhanu"</span>
+                          <span className="text-slate-500">,</span>
+                        </div>
+                        <div className="pl-5">
+                          <span className="text-emerald-400">role</span>
+                          <span className="text-slate-500">: </span>
+                          <span className="text-amber-300 font-medium">"Full-Stack Developer"</span>
+                          <span className="text-slate-500">,</span>
+                        </div>
+                        <div className="pl-5">
+                          <span className="text-emerald-400">location</span>
+                          <span className="text-slate-500">: </span>
+                          <span className="text-amber-300 font-medium">"Ethiopia 🇪🇹"</span>
+                          <span className="text-slate-500">,</span>
+                        </div>
+                        <div className="pl-5">
+                          <span className="text-emerald-400">frontend</span>
+                          <span className="text-slate-500">: </span>
+                          <span className="text-sky-300">["</span>
+                          <span className="text-cyan-300 font-medium">React</span>
+                          <span className="text-sky-300">", "</span>
+                          <span className="text-cyan-300 font-medium">TypeScript</span>
+                          <span className="text-sky-300">"]</span>
+                          <span className="text-slate-500">,</span>
+                        </div>
+                        <div className="pl-5">
+                          <span className="text-emerald-400">backend</span>
+                          <span className="text-slate-500">: </span>
+                          <span className="text-sky-300">["</span>
+                          <span className="text-cyan-300 font-medium">NestJS</span>
+                          <span className="text-sky-300">", "</span>
+                          <span className="text-cyan-300 font-medium">Golang</span>
+                          <span className="text-sky-300">", "</span>
+                          <span className="text-cyan-300 font-medium">Node.js</span>
+                          <span className="text-sky-300">"]</span>
+                          <span className="text-slate-500">,</span>
+                        </div>
+                        <div className="pl-5">
+                          <span className="text-emerald-400">database</span>
+                          <span className="text-slate-500">: </span>
+                          <span className="text-sky-300">["</span>
+                          <span className="text-cyan-300 font-medium">MongoDB</span>
+                          <span className="text-sky-300">", "</span>
+                          <span className="text-cyan-300 font-medium">PostgreSQL</span>
+                          <span className="text-sky-300">"]</span>
+                          <span className="text-slate-500">,</span>
+                        </div>
+                        <div className="pl-5">
+                          <span className="text-emerald-400">devops</span>
+                          <span className="text-slate-500">: </span>
+                          <span className="text-sky-300">["</span>
+                          <span className="text-cyan-300 font-medium">Docker</span>
+                          <span className="text-sky-300">", "</span>
+                          <span className="text-cyan-300 font-medium">Apache Pulsar</span>
+                          <span className="text-sky-300">"]</span>
+                          <span className="text-slate-500">,</span>
+                        </div>
+                        <div className="pl-5">
+                          <span className="text-emerald-400">available</span>
+                          <span className="text-slate-500">: </span>
+                          <span className="text-indigo-400 font-bold">true</span>
+                          <span className="text-slate-500">,</span>
+                        </div>
+                        <div><span className="text-yellow-300 font-bold">{"}"}</span><span className="text-slate-500">;</span></div>
+                        <div className="pt-1">
+                          <span className="text-slate-500">// </span>
+                          <span className="text-emerald-400 font-semibold">open to opportunities ✓</span>
+                        </div>
+                        <div className="flex items-center gap-0.5 pt-0.5">
+                          <span className="text-indigo-400 font-bold">{">"}</span>
+                          <span className="inline-block h-4 w-2.5 bg-indigo-400 ml-1 rounded-sm" style={{ animation: "blink 1.1s step-end infinite" }} />
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span>Ln 12, Col 1</span>
-                      <span className="flex items-center gap-1 text-emerald-400"><i className="fas fa-circle text-[8px]" /> Ready</span>
+
+                    {/* Status bar */}
+                    <div className="flex items-center justify-between border-t border-indigo-500/20 bg-indigo-600/30 px-4 py-2 text-[11px] font-mono">
+                      <div className="flex items-center gap-3 text-slate-300">
+                        <span className="flex items-center gap-1.5">
+                          <i className="fas fa-check-circle text-emerald-400 text-xs" />
+                          <span className="text-emerald-300 font-semibold">TypeScript</span>
+                        </span>
+                        <span className="text-slate-500">UTF-8</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-slate-400">
+                        <span>Ln 12, Col 1</span>
+                        <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                          <i className="fas fa-circle text-[8px] animate-pulse" /> Ready
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -446,9 +585,9 @@ export default function App() {
         <section id="skills" className={sec}>
           <div className={shell}>
             <SectionTitle
-              label="Skills"
-              title="Skills"
-              sub="Check out some of the skills i've been working on:"
+              label="⚡ Skills"
+              title="Tech Stack & Expertise"
+              sub="A curated set of tools and technologies I use to build fast, scalable, and production-ready products."
             />
             <SkillsGrid />
           </div>
